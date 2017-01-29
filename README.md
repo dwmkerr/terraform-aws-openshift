@@ -70,3 +70,8 @@ You'll be paying for:
 
  - https://www.udemy.com/openshift-enterprise-installation-and-configuration - The basic structure of the network is based on this course.
  - https://blog.openshift.com/openshift-container-platform-reference-architecture-implementation-guides/ - Detailed guide on high available solutions, including production grade AWS setup.
+
+## TODO
+
+- [ ] Consider whether it is needed to script elastic IPs for the instances and DNS.
+- [ ] Test whether the previously registered domain name is actually forwarding to the public DNS.
