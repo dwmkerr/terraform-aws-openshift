@@ -13,28 +13,14 @@ created, which is used to install the OpenShift Origin platform on the hosts.
 
 ## Prerequisites
 
-Please install the following components:
+You need:
 
 1. [Terraform](https://www.terraform.io/intro/getting-started/install.html) - `brew update && brew install terraform`.
-
-You must also have an AWS account. Be aware that a number of paid resources are
-required - some EC2 instances, hosted zones etc.
-
-You will need to set up your AWS credentials. The preferred way is to install the AWS CLI and quickly run `aws configure`:
-
-```
-$ aws configure
-AWS Access Key ID [None]: <Enter Access Key ID>
-AWS Secret Access Key [None]: <Enter Secret Key>
-Default region name [None]: ap-southeast-1
-Default output format [None]:
-```
-
-This will keep your AWS credentials in the `$HOME/.aws/credentials` file, which Terraform can use. This and all other options are documented in the [Terraform: AWS Provider](https://www.terraform.io/docs/providers/aws/index.html) documentation.
+2. An AWS account, configured with the cli locally - `brew install aws-cli && aws configure`
 
 ## Creating the Cluster
 
-The cluster is implemented as a [Terraform Module](https://www.terraform.io/docs/modules/index.html). To launch, just run:
+Create the infrastructure first:
 
 ```bash
 # Get the modules, create the infrastructure.
@@ -46,7 +32,7 @@ You will be asked for a region to deploy in, use `us-east-1` or your preferred r
 ```
 $ terraform apply
 var.region
-  Region to deploy the Consul Cluster into
+  Region to deploy the cluster into
 
   Enter a value: ap-southeast-1
 
@@ -67,15 +53,18 @@ $ ssh-add ~/.ssh/id_rsa
 
 Then create the inventory, copy it to the bastion and run the install script:
 
+```bash
+# Create our inventory from the template and terraform output. 
+sed "s/\${aws_instance.master.public_ip}/$(terraform output master-public_ip)/" inventory.template.cfg > inventory.cfg
+
+# Copy the inventory to the bastion.
+scp ./inventory.cfg ec2-user@$(terraform output bastion-public_dns):~
+
+# Run the installer on the bastion.
+cat install-from-bastion.sh | ssh -A ec2-user@$(terraform output bastion-public_dns)
 ```
-$ sed "s/\${aws_instance.master.public_ip}/$(terraform output master-public_ip)/" inventory.template.cfg > inventory.cfg
 
-$ scp ./inventory.cfg ec2-user@$(terraform output bastion-public_dns):~
-
-$ cat install-from-bastion.sh | ssh -A ec2-user@$(terraform output bastion-public_dns)
-```
-
-If the last line fails with an `ansible` not found error, just run it again. It will take about 20 minutes.
+If the last line fails with an `ansible` not found error, just run it again. It will take about 10-15 minutes.
 
 Open it by hitting port 8443 of the master node. Any username and password will work:
 
