@@ -83,7 +83,7 @@ Open it by hitting port 8443 of the master node:
 open "https://$(terraform output master-public_dns):8443"
 ```
 
-![Welcome Screenshot](./docs/welcome)
+![Welcome Screenshot](./docs/welcome.png)
 
 ## Additional Configuration
 
@@ -145,7 +145,8 @@ Now elevate priviledges, enable v2 of of the registry schema and restart:
 
 ```bash
 sudo su
-
+oc set env dc/docker-registry -n default REGISTRY_MIDDLEWARE_REPOSITORY_OPENSHIFT_ACCEPTSCHEMA2=true
+systemctl restart origin-master.service
 ```
 
 You should now be able to deploy. [More info here](https://github.com/dwmkerr/docs/blob/master/openshift.md#failed-to-pull-image-unsupported-schema-version-2).
