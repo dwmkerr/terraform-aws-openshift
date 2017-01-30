@@ -77,7 +77,7 @@ $ cat install-from-bastion.sh | ssh -A ec2-user@$(terraform output bastion-publi
 
 If the last line fails with an `ansible` not found error, just run it again. It will take about 20 minutes.
 
-Open it by hitting port 8443 of the master node:
+Open it by hitting port 8443 of the master node. Any username and password will work:
 
 ```bash
 open "https://$(terraform output master-public_dns):8443"
