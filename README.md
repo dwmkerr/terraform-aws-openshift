@@ -1,5 +1,14 @@
 # terraform-aws-openshift
-It's OpenShift, on AWS, handled by Terraform. But it's also WIP, eh?
+
+This project shows you how to set up OpenShift Origin on AWS using Terraform.
+
+## Overview
+
+Terraform is used to create infrastructure as shown:
+
+![Network Diagram](./docs/network-diagram.png)
+
+Once the infrastructure is set up, a single command is used to install the OpenShift platform on the hosts.
 
 ## Prerequisites
 
@@ -26,17 +35,11 @@ This will keep your AWS credentials in the `$HOME/.aws/credentials` file, which 
 The cluster is implemented as a [Terraform Module](https://www.terraform.io/docs/modules/index.html). To launch, just run:
 
 ```bash
-# Create the module.
-terraform get
-
-# See what we will create, or do a dry run!
-terraform plan
-
-# Create the cluster!
-terraform apply
+# Get the modules, create the infrastructure.
+terraform get && terraform apply
 ```
 
-You will be asked for a region to deploy in, use `us-east-1` should work fine! You can configure the nuances of how the cluster is created in the [`main.tf`](./main.tf) file. Once created, you will see a message like:
+You will be asked for a region to deploy in, use `us-east-1` or your preferred region. You can configure the nuances of how the cluster is created in the [`main.tf`](./main.tf) file. Once created, you will see a message like:
 
 ```
 $ terraform apply
@@ -50,7 +53,38 @@ var.region
 Apply complete! Resources: 20 added, 0 changed, 0 destroyed.
 ```
 
-That's it.
+That's it! The infrastructure is ready and you can install OpenShift.
+
+## Installing OpenShift
+
+Make sure you have your local identity added:
+
+```
+$ ssh-add ~/.ssh/id_rsa
+```
+
+Then just run the install script on the bastion:
+
+```
+$ cat install-from-bastion.sh | ssh -A ec2-user@$(terraform output bastion-public_dns)
+```
+
+It will take about 20 minutes.
+
+## Additional Configuration
+
+Access the master or nodes to update configuration and add feature as needed:
+
+```
+$ ssh -A ec2-user@$(terraform output bastion-public_dns)
+$ ssh -A master.openshift.local
+$ sudo su
+$ oc get nodes
+NAME                     STATUS    AGE
+master.openshift.local   Ready     1h
+node1.openshift.local    Ready     1h
+node2.openshift.local    Ready     1h
+```
 
 ## Destroying the Cluster
 
@@ -70,8 +104,10 @@ You'll be paying for:
 
  - https://www.udemy.com/openshift-enterprise-installation-and-configuration - The basic structure of the network is based on this course.
  - https://blog.openshift.com/openshift-container-platform-reference-architecture-implementation-guides/ - Detailed guide on high available solutions, including production grade AWS setup.
+ - https://access.redhat.com/sites/default/files/attachments/ocp-on-gce-3.pdf - Some useful info on using the bastion for installation.
 
 ## TODO
 
 - [ ] Consider whether it is needed to script elastic IPs for the instances and DNS.
-- [ ] Test whether the previously registered domain name is actually forwarding to the public DNS.
+- [ ] Consider documenting public DNS setup.
+- [ ] Consider moving the nodes into a private subnet.

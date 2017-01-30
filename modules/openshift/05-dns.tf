@@ -40,36 +40,3 @@ resource "aws_route53_record" "node2-a-record" {
         "${aws_instance.node2.private_ip}"
     ]
 }
-
-//  Create the external DNS.
-resource "aws_route53_zone" "external" {
-  name = "${var.public_domain}"
-  comment = "OpenShift Cluster External DNS"
-
-  tags {
-    Name    = "OpenShift External DNS"
-    Project = "openshift"
-  }
-}
-
-//  Create a record to hit the master node via 'console.<domain>'.
-resource "aws_route53_record" "master-console-a-record" {
-    zone_id = "${aws_route53_zone.external.zone_id}"
-    name = "console.${var.public_domain}"
-    type = "A"
-    ttl  = 300
-    records = [
-        "${aws_instance.master.public_ip}"
-    ]
-}
-
-//  Also add a wildcard - this'll be for services etc.
-resource "aws_route53_record" "master-wildcard-a-record" {
-    zone_id = "${aws_route53_zone.external.zone_id}"
-    name = "*.${var.public_domain}"
-    type = "A"
-    ttl  = 300
-    records = [
-        "${aws_instance.master.public_ip}"
-    ]
-}

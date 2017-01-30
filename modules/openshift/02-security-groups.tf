@@ -1,9 +1,5 @@
-//  This is not the best way to handle security groups for an OpenShift cluster,
-//  as the various different needs are bundled into one security group. However
-//  this suffices for a simple demo.
-//  IMPORTANT: This is *not* production ready. SSH access is allowed to all
-//  instances from anywhere.
-
+//  This security group allows intra-node communication on all ports with all
+//  protocols.
 resource "aws_security_group" "openshift-vpc" {
   name        = "openshift-vpc"
   description = "Default security group that allows all instances in the VPC to talk to each other over any port and protocol."
@@ -29,11 +25,11 @@ resource "aws_security_group" "openshift-vpc" {
   }
 }
 
-//  This security group allows public access to the instances for HTTP, HTTPS
-//  common HTTP/S proxy ports and SSH.
-resource "aws_security_group" "openshift-public-access" {
-  name        = "openshift-public-access"
-  description = "Security group that allows public access to instances, HTTP, HTTPS, SSH and more."
+//  This security group allows public ingress to the instances for HTTP, HTTPS
+//  and common HTTP/S proxy ports.
+resource "aws_security_group" "openshift-public-ingress" {
+  name        = "openshift-public-ingress"
+  description = "Security group that allows public ingress to instances, HTTP, HTTPS and more."
   vpc_id      = "${aws_vpc.openshift.id}"
 
   //  HTTP
@@ -68,6 +64,47 @@ resource "aws_security_group" "openshift-public-access" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  tags {
+    Name    = "OpenShift Public Access"
+    Project = "openshift"
+  }
+}
+
+//  This security group allows public egress from the instances for HTTP and
+//  HTTPS, which is needed for yum updates, git access etc etc.
+resource "aws_security_group" "openshift-public-egress" {
+  name        = "openshift-public-egress"
+  description = "Security group that allows egress to the internet for instances over HTTP and HTTPS."
+  vpc_id      = "${aws_vpc.openshift.id}"
+
+  //  HTTP
+  egress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  //  HTTPS
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags {
+    Name    = "OpenShift Public Access"
+    Project = "openshift"
+  }
+}
+
+//  Security group which allows SSH access to a host. Used for the bastion.
+resource "aws_security_group" "openshift-ssh" {
+  name        = "openshift-ssh"
+  description = "Security group that allows public ingress over SSH."
+  vpc_id      = "${aws_vpc.openshift.id}"
+
   //  SSH
   ingress {
     from_port   = 22
@@ -77,7 +114,7 @@ resource "aws_security_group" "openshift-public-access" {
   }
 
   tags {
-    Name    = "OpenShift Public Access"
+    Name    = "OpenShift SSH Access"
     Project = "openshift"
   }
 }

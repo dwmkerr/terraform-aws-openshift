@@ -32,15 +32,25 @@ resource "aws_key_pair" "keypair" {
   public_key = "${file(var.public_key_path)}"
 }
 
+//  Create the master userdata script.
+data "template_file" "setup-master" {
+  template = "${file("${path.module}/files/setup-master.sh")}"
+
+  //  Currently, no vars needed.
+}
+
 //  Launch configuration for the consul cluster auto-scaling group.
 resource "aws_instance" "master" {
   ami                  = "${data.aws_ami.rhel7_2.id}"
   instance_type        = "${var.amisize}"
   subnet_id            = "${aws_subnet.public-subnet.id}"
+  iam_instance_profile = "${aws_iam_instance_profile.openshift-instance-profile.id}"
+  user_data            = "${data.template_file.setup-master.rendered}"
 
   security_groups = [
     "${aws_security_group.openshift-vpc.id}",
-    "${aws_security_group.openshift-public-access.id}",
+    "${aws_security_group.openshift-public-ingress.id}",
+    "${aws_security_group.openshift-public-egress.id}",
   ]
 
   //  We need at least 30GB for OpenShift, let's be greedy...
@@ -56,16 +66,26 @@ resource "aws_instance" "master" {
   }
 }
 
+//  Create the node userdata script.
+data "template_file" "setup-node" {
+  template = "${file("${path.module}/files/setup-node.sh")}"
+
+  //  Currently, no vars needed.
+}
+
 //  Create the two nodes. This would be better as a Launch Configuration and
 //  autoscaling group, but I'm keeping it simple...
 resource "aws_instance" "node1" {
   ami                  = "${data.aws_ami.rhel7_2.id}"
   instance_type        = "${var.amisize}"
   subnet_id            = "${aws_subnet.public-subnet.id}"
+  iam_instance_profile = "${aws_iam_instance_profile.openshift-instance-profile.id}"
+  user_data            = "${data.template_file.setup-node.rendered}"
 
   security_groups = [
     "${aws_security_group.openshift-vpc.id}",
-    "${aws_security_group.openshift-public-access.id}",
+    "${aws_security_group.openshift-public-ingress.id}",
+    "${aws_security_group.openshift-public-egress.id}",
   ]
 
   //  We need at least 30GB for OpenShift, let's be greedy...
@@ -84,10 +104,12 @@ resource "aws_instance" "node2" {
   ami                  = "${data.aws_ami.rhel7_2.id}"
   instance_type        = "${var.amisize}"
   subnet_id            = "${aws_subnet.public-subnet.id}"
+  iam_instance_profile = "${aws_iam_instance_profile.openshift-instance-profile.id}"
 
   security_groups = [
     "${aws_security_group.openshift-vpc.id}",
-    "${aws_security_group.openshift-public-access.id}",
+    "${aws_security_group.openshift-public-ingress.id}",
+    "${aws_security_group.openshift-public-egress.id}",
   ]
 
   //  We need at least 30GB for OpenShift, let's be greedy...

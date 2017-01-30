@@ -17,12 +17,54 @@ module "openshift" {
 }
 
 //  Output some useful variables for quick SSH access etc.
-output "master-dns" {
-  value = "${module.openshift.master-dns}"
+output "master-public_dns" {
+  value = "${module.openshift.master-public_dns}"
 }
-output "node1-dns" {
-  value = "${module.openshift.node1-dns}"
+output "master-public_ip" {
+  value = "${module.openshift.master-public_ip}"
 }
-output "node2-dns" {
-  value = "${module.openshift.node2-dns}"
+output "master-private_dns" {
+  value = "${module.openshift.master-private_dns}"
+}
+output "master-private_ip" {
+  value = "${module.openshift.master-private_ip}"
+}
+
+output "node1-public_dns" {
+  value = "${module.openshift.node1-public_dns}"
+}
+output "node1-public_ip" {
+  value = "${module.openshift.node1-public_ip}"
+}
+output "node1-private_dns" {
+  value = "${module.openshift.node1-private_dns}"
+}
+output "node1-private_ip" {
+  value = "${module.openshift.node1-private_ip}"
+}
+
+output "node2-public_dns" {
+  value = "${module.openshift.node2-public_dns}"
+}
+output "node2-public_ip" {
+  value = "${module.openshift.node2-public_ip}"
+}
+output "node2-private_dns" {
+  value = "${module.openshift.node2-private_dns}"
+}
+output "node2-private_ip" {
+  value = "${module.openshift.node2-private_ip}"
+}
+
+output "bastion-public_dns" {
+  value = "${module.openshift.bastion-public_dns}"
+}
+output "bastion-public_ip" {
+  value = "${module.openshift.bastion-public_ip}"
+}
+output "bastion-private_dns" {
+  value = "${module.openshift.bastion-private_dns}"
+}
+output "bastion-private_ip" {
+  value = "${module.openshift.bastion-private_ip}"
 }
