@@ -1,3 +1,7 @@
 # Infrastructure ignores.
 .terraform
 terraform.tfvars
+terraform.tfstate
+
+# The generated inventory file.
+inventory.cfg
