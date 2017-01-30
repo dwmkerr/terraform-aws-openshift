@@ -66,6 +66,8 @@ $ ssh-add ~/.ssh/id_rsa
 Then just run the install script on the bastion:
 
 ```
+$ sed "s/\${aws_instance.master.public_ip}/$(terraform output master-public_ip)/" inventory.template.cfg > inventory.cfg
+$ scp ./inventory.cfg ec2-user@$(terraform output bastion-public_dns):~
 $ cat install-from-bastion.sh | ssh -A ec2-user@$(terraform output bastion-public_dns)
 ```
 
@@ -85,15 +87,15 @@ TODO screenshot
 
 Access the master or nodes to update configuration and add feature as needed:
 
-```
-$ ssh -A ec2-user@$(terraform output bastion-public_dns)
-$ ssh -A master.openshift.local
-$ sudo su
+```bash
+$ oc login https://$(terraform output master-public_dns):8443
+
 $ oc get nodes
 NAME                     STATUS    AGE
 master.openshift.local   Ready     1h
 node1.openshift.local    Ready     1h
 node2.openshift.local    Ready     1h
+
 ```
 
 ## Destroying the Cluster
