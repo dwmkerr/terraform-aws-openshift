@@ -69,7 +69,17 @@ Then just run the install script on the bastion:
 $ cat install-from-bastion.sh | ssh -A ec2-user@$(terraform output bastion-public_dns)
 ```
 
-It will take about 20 minutes.
+It will take about 20 minutes:
+
+TODO screenshot
+
+Open it by hitting port 8443 of the master node:
+
+```bash
+open "https://$(terraform output master-public_dns):8443"
+```
+
+TODO screenshot
 
 ## Additional Configuration
 
