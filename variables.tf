@@ -6,11 +6,6 @@ variable "region" {
   //  default = "us-east-1"
 }
 
-//  The public domain, must be a domain owned by the AWS account.
-variable "public_domain" {
-  description = "The public domain for the cluster, e.g: openshifting.com"
-}
-
 //  The public key to use for SSH access.
 variable "public_key_path" {
   default = "~/.ssh/id_rsa.pub"
