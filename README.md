@@ -16,7 +16,7 @@ created, which is used to install the OpenShift Origin platform on the hosts.
 You need:
 
 1. [Terraform](https://www.terraform.io/intro/getting-started/install.html) - `brew update && brew install terraform`
-2. An AWS account, configured with the cli locally - `brew install aws-cli && aws configure`
+2. An AWS account, configured with the cli locally - `brew install awscli && aws configure`
 
 ## Creating the Cluster
 
