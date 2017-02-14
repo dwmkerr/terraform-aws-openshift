@@ -1,6 +1,6 @@
 # terraform-aws-openshift
 
-This project shows you how to set up OpenShift Origin on AWS using Terraform.
+This project shows you how to set up OpenShift Origin on AWS using Terraform. This the companion project to my article [Creating a Resilient Consul Cluster for Docker Microservice Discovery with Terraform and AWS](http://www.dwmkerr.com/creating-a-resilient-consul-cluster-for-docker-microservice-discovery-with-terraform-and-aws/).
 
 ## Overview
 
