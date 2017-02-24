@@ -69,7 +69,7 @@ If the last line fails with an `ansible` not found error, just run it again. It 
 Open it by hitting port 8443 of the master node. Any username and password will work:
 
 ```bash
-open "https://$(terraform output master-public_dns):8443"
+open $(terraform output master-url)
 ```
 
 ![Welcome Screenshot](./docs/welcome.png)
@@ -81,7 +81,7 @@ The easiest way to configure is to change the settings in the [./inventory.templ
 Access the master or nodes to update configuration and add feature as needed:
 
 ```
-$ oc login https://$(terraform output master-public_dns):8443
+$ oc login $(terraform output master-url)
 
 $ oc get nodes
 NAME                     STATUS    AGE
