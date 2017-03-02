@@ -105,6 +105,7 @@ resource "aws_instance" "node2" {
   instance_type        = "${var.amisize}"
   subnet_id            = "${aws_subnet.public-subnet.id}"
   iam_instance_profile = "${aws_iam_instance_profile.openshift-instance-profile.id}"
+  user_data            = "${data.template_file.setup-node.rendered}"
 
   security_groups = [
     "${aws_security_group.openshift-vpc.id}",

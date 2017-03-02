@@ -41,7 +41,7 @@ var.region
 Apply complete! Resources: 20 added, 0 changed, 0 destroyed.
 ```
 
-That's it! The infrastructure is ready and you can install OpenShift.
+That's it! The infrastructure is ready and you can install OpenShift. Leave about five minutes for everything to start up fully.
 
 ## Installing OpenShift
 
