@@ -51,8 +51,10 @@ yum-config-manager --enable rhui-REGION-rhel-server-extras
 yum install -y docker
 
 # Update the docker config to allow OpenShift's local insecure registry.
+# It seems that ansible actually does this already for us however, so this step
+# may now be redundant.
 sed -i '/OPTIONS=.*/c\OPTIONS="--selinux-enabled --insecure-registry 172.30.0.0/16 --log-opt max-size=1M --log-opt max-file=3"' \
-/etc/sysconfig/docker
+  /etc/sysconfig/docker
 systemctl restart docker
 
 # Note we are not configuring Docker storage as per the guide.
