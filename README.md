@@ -104,6 +104,14 @@ node1.openshift.local    Ready     1h
 node2.openshift.local    Ready     1h
 ```
 
+## Choosing the OpenShift Version
+
+To change the version, just update the version identifier in this line of the [`./install-from-bastion.sh`](./install-from-bastion.sh) script:
+
+```bash
+git clone -b release-1.5 https://github.com/openshift/openshift-ansible
+```
+
 ## Destroying the Cluster
 
 Bring everything down with:
