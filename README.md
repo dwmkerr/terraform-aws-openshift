@@ -72,37 +72,60 @@ Open it by hitting port 8443 of the master node. Any username and password will 
 open $(terraform output master-url)
 ```
 
+## Accessing and Managing OpenShift
+
+There are a few ways to access and manage the OpenShift Cluster.
+
+### OpenShift Web Console
+
+You can log into the OpenShift console by hitting the console webpage:
+
+```bash
+open $(terraform output master-url)
+```
+
+The url will be something like `https://a.b.c.d.xip.io:8443`, I am using the amazing [xip.io](http://xip.io/) service to provide an address to the service which supports TLS with a valid certificate.
+
+Any username or password combination will work, as 'allow all' authentication is enabled by default.
+
+### The Master Node
+
+The master node has the OpenShift client installed and is authenticated as a cluter administrator. If you SSH onto the master node via the bastion, then you can use the OpenShift client and have full access to all projects:
+
+```
+$ ssh -t -A ec2-user@$(terraform output bastion-public_dns) ssh master.openshift.local
+$ oc get pods
+NAME                       READY     STATUS    RESTARTS   AGE
+docker-registry-1-d9734    1/1       Running   0          2h
+registry-console-1-cm8zw   1/1       Running   0          2h
+router-1-stq3d             1/1       Running   0          2h
+```
+
+Notice that the `default` project is in use and the core infrastructure components (router etc) are available.
+
+You can also use the `oadm` tool to perform administrative operations:
+
+```
+$ oadm new-project test
+Created project test
+```
+
+### The OpenShift Client
+
+From the OpenShift Web Console 'about' page, you can install the `oc` client, which gives command-line access. Once the client is installed, you can login and administer the cluster via your local machine's shell:
+
+```bash
+oc login $(terraform output master-url)
+```
+
+Note that you won't be able to run OpenShift administrative commands. To administer, you'll need to SSH onto the master node.
+
+
 ![Welcome Screenshot](./docs/welcome.png)
 
 ## Additional Configuration
 
 The easiest way to configure is to change the settings in the [./inventory.template.cfg](./inventory.template.cfg) file, based on settings in the [OpenShift Origin - Advanced Installation](https://docs.openshift.org/latest/install_config/install/advanced_install.html) guide.
-
-Access the master or nodes to update configuration and add feature as needed:
-
-```
-$ oc login $(terraform output master-url)
-
-$ oc get nodes
-NAME                     STATUS    AGE
-master.openshift.local   Ready     1h
-node1.openshift.local    Ready     1h
-node2.openshift.local    Ready     1h
-```
-
-If you don't want to install the OpenShift client locally, you can access the hosts directly via the bastion:
-
-```
-$ ssh -A ec2-user@$(terraform output bastion-public_dns)
-
-$ ssh master.openshift.local
-
-$ sudo su && oc get nodes
-NAME                     STATUS    AGE
-master.openshift.local   Ready     1h
-node1.openshift.local    Ready     1h
-node2.openshift.local    Ready     1h
-```
 
 ## Choosing the OpenShift Version
 
