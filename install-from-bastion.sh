@@ -11,7 +11,7 @@ pip install -Iv ansible==2.3.0.0
 git clone -b release-3.6 https://github.com/openshift/openshift-ansible
 
 # Run the playbook.
-ANSIBLE_HOST_KEY_CHECKING=False /usr/local/bin/ansible-playbook -i ./inventory.cfg ./openshift-ansible/playbooks/byo/config.yml -vvv
+ANSIBLE_HOST_KEY_CHECKING=False /usr/local/bin/ansible-playbook -i ./inventory.cfg ./openshift-ansible/playbooks/byo/config.yml # uncomment for verbose! -vvv
 
 # If needed, uninstall with the below:
 # ansible-playbook playbooks/adhoc/uninstall.yml
