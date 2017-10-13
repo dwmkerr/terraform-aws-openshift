@@ -51,10 +51,21 @@ yum-config-manager --enable rhui-REGION-rhel-server-extras
 yum install -y docker
 
 # Update the docker config to allow OpenShift's local insecure registry.
-# It seems that ansible actually does this already for us however, so this step
-# may now be redundant.
 sed -i '/OPTIONS=.*/c\OPTIONS="--selinux-enabled --insecure-registry 172.30.0.0/16 --log-opt max-size=1M --log-opt max-file=3"' \
-  /etc/sysconfig/docker
+/etc/sysconfig/docker
 systemctl restart docker
 
-# Note we are not configuring Docker storage as per the guide.
+# Configure the Docker storage back end to prepare and use our EBS block device.
+# https://docs.openshift.org/latest/install_config/install/host_preparation.html#configuring-docker-storage
+# Why xvdf? See:
+# http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-using-volumes.html
+cat <<EOF > /etc/sysconfig/docker-storage-setup
+DEVS=/dev/xvdf
+VG=docker-vg
+EOF
+docker-storage-setup
+
+# Restart docker and go to clean state as required by docker-storage-setup.
+systemctl stop docker
+rm -rf /var/lib/docker/*
+systemctl restart docker
