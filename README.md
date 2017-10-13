@@ -128,6 +128,8 @@ git clone -b release-3.6 https://github.com/openshift/openshift-ansible
 
 Available versions are listed [here](https://github.com/openshift/openshift-ansible#getting-the-correct-version).
 
+OpenShift 3.5 is fully tested, and has a slightly different setup. You can build 3.5 by checking out the [`release/openshift-3.5`](https://github.com/dwmkerr/terraform-aws-openshift/tree/release/openshift-3.5) branch.
+
 ## Destroying the Cluster
 
 Bring everything down with:

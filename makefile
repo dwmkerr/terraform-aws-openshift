@@ -15,5 +15,6 @@ openshift:
 	# Run the installer on the bastion.
 	cat install-from-bastion.sh | ssh -o StrictHostKeyChecking=no -A ec2-user@$$(terraform output bastion-public_dns)
 
+# Open the console.
 open:
 	open $$(terraform output master-url)
