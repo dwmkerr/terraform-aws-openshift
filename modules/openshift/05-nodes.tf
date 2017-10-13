@@ -1,31 +1,3 @@
-//  Define the RHEL 7.2 AMI by:
-//  RedHat, Latest, x86_64, EBS, HVM, RHEL 7.2
-data "aws_ami" "rhel7_2" {
-  most_recent = true
-
-  owners = ["309956199498"] // Red Hat's account ID.
-
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  filter {
-    name   = "name"
-    values = ["RHEL-7.2*"]
-  }
-}
-
 //  Create an SSH keypair
 resource "aws_key_pair" "keypair" {
   key_name   = "${var.key_name}"
@@ -42,7 +14,8 @@ data "template_file" "setup-master" {
 //  Launch configuration for the consul cluster auto-scaling group.
 resource "aws_instance" "master" {
   ami                  = "${data.aws_ami.rhel7_2.id}"
-  instance_type        = "${var.amisize}"
+  # Master nodes require at least 16GB of memory.
+  instance_type        = "m4.xlarge"
   subnet_id            = "${aws_subnet.public-subnet.id}"
   iam_instance_profile = "${aws_iam_instance_profile.openshift-instance-profile.id}"
   user_data            = "${data.template_file.setup-master.rendered}"
@@ -56,6 +29,13 @@ resource "aws_instance" "master" {
   //  We need at least 30GB for OpenShift, let's be greedy...
   root_block_device {
     volume_size = 50
+  }
+
+  # Storage for Docker, see:
+  # https://docs.openshift.org/latest/install_config/install/host_preparation.html#configuring-docker-storage
+  ebs_block_device {
+    device_name = "/dev/sdf"
+    volume_size = 80
   }
 
   key_name = "${aws_key_pair.keypair.key_name}"
@@ -93,6 +73,13 @@ resource "aws_instance" "node1" {
     volume_size = 50
   }
 
+  # Storage for Docker, see:
+  # https://docs.openshift.org/latest/install_config/install/host_preparation.html#configuring-docker-storage
+  ebs_block_device {
+    device_name = "/dev/sdf"
+    volume_size = 80
+  }
+
   key_name = "${aws_key_pair.keypair.key_name}"
 
   tags {
@@ -116,6 +103,13 @@ resource "aws_instance" "node2" {
   //  We need at least 30GB for OpenShift, let's be greedy...
   root_block_device {
     volume_size = 50
+  }
+
+  # Storage for Docker, see:
+  # https://docs.openshift.org/latest/install_config/install/host_preparation.html#configuring-docker-storage
+  ebs_block_device {
+    device_name = "/dev/sdf"
+    volume_size = 80
   }
 
   key_name = "${aws_key_pair.keypair.key_name}"
