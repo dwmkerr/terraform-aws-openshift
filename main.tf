@@ -31,3 +31,6 @@ output "bastion-public_dns" {
 output "bastion-public_ip" {
   value = "${module.openshift.bastion-public_ip}"
 }
+output "splunk-console-url" {
+  value = "https://${module.openshift.splunk-public_dns}:8000"
+}

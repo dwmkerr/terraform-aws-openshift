@@ -50,3 +50,8 @@ output "bastion-private_dns" {
 output "bastion-private_ip" {
   value = "${aws_instance.bastion.private_ip}"
 }
+
+# Output some information about the Splunk host.
+output "splunk-public_dns" {
+  value = "${aws_instance.splunk.public_dns}"
+}
