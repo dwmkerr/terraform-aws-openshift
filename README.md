@@ -53,7 +53,7 @@ make openshift
 
 You will be asked to accept the host key of the bastion server (this is so that the install script can be copied onto the cluster and run), just type `yes` and hit enter to continue.
 
-If this fails with an `ansible` not found error, just run it again. It will take about 10-15 minutes.
+It can take up to 30 minutes to deploy. If this fails with an `ansible` not found error, just run it again.
 
 Open it by hitting port 8443 of the master node. Any username and password will work:
 
@@ -140,7 +140,8 @@ terraform destroy
 
 You'll be paying for:
 
-- 3 x t2.large instances
+- 1 x m4.xlarge instance
+- 2 x t2.large instances
 
 ## Troubleshooting
 
