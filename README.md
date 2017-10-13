@@ -45,26 +45,15 @@ That's it! The infrastructure is ready and you can install OpenShift. Leave abou
 
 ## Installing OpenShift
 
-Make sure you have your local identity added:
-
-```
-$ ssh-add ~/.ssh/id_rsa
-```
-
-Then create the inventory, copy it to the bastion and run the install script:
+To install OpenShift on the cluster, just run:
 
 ```bash
-# Create our inventory from the template and terraform output. 
-sed "s/\${aws_instance.master.public_ip}/$(terraform output master-public_ip)/" inventory.template.cfg > inventory.cfg
-
-# Copy the inventory to the bastion.
-scp ./inventory.cfg ec2-user@$(terraform output bastion-public_dns):~
-
-# Run the installer on the bastion.
-cat install-from-bastion.sh | ssh -A ec2-user@$(terraform output bastion-public_dns)
+make openshift
 ```
 
-If the last line fails with an `ansible` not found error, just run it again. It will take about 10-15 minutes.
+You will be asked to accept the host key of the bastion server (this is so that the install script can be copied onto the cluster and run), just type `yes` and hit enter to continue.
+
+If this fails with an `ansible` not found error, just run it again. It will take about 10-15 minutes.
 
 Open it by hitting port 8443 of the master node. Any username and password will work:
 
@@ -127,13 +116,17 @@ Note that you won't be able to run OpenShift administrative commands. To adminis
 
 The easiest way to configure is to change the settings in the [./inventory.template.cfg](./inventory.template.cfg) file, based on settings in the [OpenShift Origin - Advanced Installation](https://docs.openshift.org/latest/install_config/install/advanced_install.html) guide.
 
+When you run `make openshift`, all that happens is the `inventory.template.cfg` is turned copied to `inventory.cfg`, with the correct IP addresses loaded from terraform for each node. Then the inventory is copied to the master and the setup script runs. You can see the details in the [`makefile`](./makefile).
+
 ## Choosing the OpenShift Version
 
 To change the version, just update the version identifier in this line of the [`./install-from-bastion.sh`](./install-from-bastion.sh) script:
 
 ```bash
-git clone -b release-1.5 https://github.com/openshift/openshift-ansible
+git clone -b release-3.6 https://github.com/openshift/openshift-ansible
 ```
+
+Available versions are listed [here](https://github.com/openshift/openshift-ansible#getting-the-correct-version).
 
 ## Destroying the Cluster
 
@@ -177,6 +170,7 @@ You should now be able to deploy. [More info here](https://github.com/dwmkerr/do
  - https://blog.openshift.com/openshift-container-platform-reference-architecture-implementation-guides/ - Detailed guide on high available solutions, including production grade AWS setup.
  - https://access.redhat.com/sites/default/files/attachments/ocp-on-gce-3.pdf - Some useful info on using the bastion for installation.
  - http://dustymabe.com/2016/12/07/installing-an-openshift-origin-cluster-on-fedora-25-atomic-host-part-1/ - Great guide on cluster setup.
+ - [Deploying OpenShift Container Platform 3.5 on AWS](https://access.redhat.com/documentation/en-us/reference_architectures/2017/html-single/deploying_openshift_container_platform_3.5_on_amazon_web_services/)
 
 ## TODO
 
