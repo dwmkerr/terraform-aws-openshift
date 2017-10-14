@@ -18,3 +18,11 @@ openshift:
 # Open the console.
 open:
 	open $$(terraform output master-url)
+
+# SSH onto the master.
+ssh-master:
+	ssh -t -A -o StrictHostKeyChecking=no ec2-user@$$(terraform output bastion-public_dns) ssh master.openshift.local
+
+# Setup splunk.
+splunk:
+	cat oc process -v SPLUNK_FORWARD_SERVER=$$(terraform output splunk-private_ip) | ssh -t -A -o StrictHostKeyChecking=no ec2-user@$$(terraform output bastion-public_dns) ssh master.openshift.local oc create -f

@@ -13,7 +13,7 @@ cat > ./awslogs.conf <<- EOF
 state_file = /var/awslogs/state/agent-state
 
 [/var/log/messages]
-log_stream_name = {instance_id}
+log_stream_name = openshift-node-{instance_id}
 log_group_name = /var/log/messages
 file = /var/log/messages
 datetime_format = %b %d %H:%M:%S
@@ -21,7 +21,7 @@ buffer_duration = 5000
 initial_position = start_of_file
 
 [/var/log/user-data.log]
-log_stream_name = {instance_id}
+log_stream_name = openshift-node-{instance_id}
 log_group_name = /var/log/user-data.log
 file = /var/log/user-data.log
 EOF
@@ -50,9 +50,10 @@ yum-config-manager --enable rhui-REGION-rhel-server-extras
 # Docker setup. Check the version with `docker version`, should be 1.12.
 yum install -y docker
 
-# Update the docker config to allow OpenShift's local insecure registry.
-sed -i '/OPTIONS=.*/c\OPTIONS="--selinux-enabled --insecure-registry 172.30.0.0/16 --log-opt max-size=1M --log-opt max-file=3"' \
-/etc/sysconfig/docker
+# Update the docker config to allow OpenShift's local insecure registry. Also
+# use json-file for logging, so our Splunk forwarder can eat the container logs.
+# json-file for logging 
+sed -i '/OPTIONS=.*/c\OPTIONS="--selinux-enabled --insecure-registry 172.30.0.0/16 --log-driver=json-file --log-opt max-size=1M --log-opt max-file=3"' /etc/sysconfig/docker
 systemctl restart docker
 
 # Configure the Docker storage back end to prepare and use our EBS block device.

@@ -27,12 +27,15 @@ oadm policy add-scc-to-user anyuid system:serviceaccount:default:splunk-forwarde
 # TODO
 
 - [x] update openshift origin version
-- [ ] makefile to setup software
-- [ ] image for splunk server 
+- [x] makefile to setup software
+- [ ] fix logging to json files in /var/log/containers
+- [ ] Rebuild, ensure json logging is set up, ensure we can create security groups
+- [ ] image for splunk server
 - [ ] Create a service account for the forwarder which allows host volume mounts
 - [ ] Attach the SA to the DS
 - [ ] Restart always for the DS
 - [ ] Automate the DS setup on the master node
+- [ ] Ensure the pod and container name are stripped from the logs.
 
 ## Symlink Logs
 
@@ -40,7 +43,7 @@ To get logs with the container name and ID, it helps to have the symlinked logs.
 
 - https://github.com/minishift/minishift/issues/510
 
-This means you should be running OpenShift 3.6 or onwards. TODO confirm 3.5 is ok?
+This means you should be running OpenShift 3.6 or onwards. To have symlinked logs, you must also run with the [`json-file` log driver](https://docs.docker.com/engine/admin/logging/json-file/).
 
 # Important Documentation
 

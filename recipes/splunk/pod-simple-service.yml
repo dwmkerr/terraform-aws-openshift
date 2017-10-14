@@ -4,7 +4,30 @@ metadata:
   name: simple-service
 spec:
   containers:
-  - name: simple-service
-    image: busybox
-    args: [/bin/sh, -c,
-            'i=0; while true; do echo "$i: $(date)"; i=$((i+1)); sleep 1; done']
+kind: Template
+apiVersion: v1
+objects:
+  - kind: DeploymentConfig
+    apiVersion: v1
+    metadata:
+      name: counter
+    spec:
+      triggers:
+        -
+          type: ConfigChange
+      replicas: 2
+      selector:
+        deploymentconfig: counter
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            deploymentconfig: counter
+        spec:
+          containers:
+            - name: counter
+              image: busybox
+              args: [/bin/sh, -c,
+                      'i=0; while true; do echo "$i: $(date)"; i=$((i+1)); sleep 1; done']
+labels:
+  app: counter

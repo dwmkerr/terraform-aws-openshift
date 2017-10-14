@@ -35,6 +35,7 @@ resource "aws_instance" "splunk" {
 
   security_groups = [
     "${aws_security_group.openshift-vpc.id}",
+    "${aws_security_group.openshift-public-egress.id}",
     "${aws_security_group.splunk-public-management-ingress.id}",
   ]
 
