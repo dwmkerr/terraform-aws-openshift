@@ -1,0 +1,58 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: splunk-forwarder
+spec:
+  selector:
+      matchLabels:
+        name: splunk-forwarder
+  template:
+    metadata:
+      labels:
+        name: splunk-forwarder
+    spec:
+      serviceAccount: splunk-forwarder
+      restartPolicy: Always
+      nodeSelector:
+        region: primary
+      containers:
+      - name: splunk-forwarder
+        image: splunk/universalforwarder:6.5.2-monitor
+        env:
+        - name: SPLUNK_START_ARGS
+          value: "--accept-license --answer-yes"
+        - name: SPLUNK_USER
+          value: root
+        - name: SPLUNK_FORWARD_SERVER
+          value: "${SPLUNK_FORWARD_SERVER}:9997"
+        volumeMounts:
+        - mountPath: /var/run/docker.sock
+          readOnly: true
+          name: docker-socket
+        - mountPath: /host/containers
+          readOnly: true
+          name: var-lib-docker-containers
+        - mountPath: /docker/log
+          readOnly: true
+          name: var-log
+        # Having some weird issues with chown permissions here, skipping for now...
+        #- mountPath: /opt/splunk/etc
+        #  name: opt-splunk-etc
+        # - mountPath: /opt/splunk/var
+        #  name: opt-splunk-var
+      volumes:
+        - name: docker-socket
+          hostPath:
+            path: /var/run/docker.sock
+        - name: var-log-containers
+          hostPath:
+            path: /var/log/containers
+        - name: var-log-pods
+          hostPath:
+            path: /var/log/pods
+        - name: opt-splunk-etc
+          hostPath:
+            path: /opt/splunk/etc
+        - name: opt-splunk-var
+          hostPath:
+            path: /opt/splunk/var

@@ -1,3 +1,13 @@
+# Note
+
+Conceptually
+
+1. The json-file docker logger logs to /var/lib/docker/containers
+2. The /var/log/pods folder has symlinks with the pods' names to the container logs
+3. The /var/log/containers folder has symlinks with the containers and pods names to the pods logs folder
+
+By adding all three locations, so we can follow symlinks, and logging the containers folder, we can get nice log output with descriptive filenames. We can also regex these names to get the pod and container.
+
 # Recipes - Splunk
 
 1. Get the free Splunk installer from: https://www.splunk.com/goto/Download_4_V1
@@ -14,27 +24,18 @@ tar xvzf splunk_package_name.tgz -C /opt
 
 Installation instructions: https://docs.splunk.com/Documentation/Splunk/6.5.3/Installation/InstallonLinux
 
-```
-# Create the forwarder service account.
-oc create sa splunk-forwarder
-
-# Add the permissions required to mount volumes from the host.
-# Could attempt to use least-privileges by only using mounthost, but privileged works for now..
-oc adm policy add-scc-to-user privileged system:serviceaccount:default:splunk-forwarder
-# Allow the image to run as root, as it wants to access the filesystem and splunk folders.
-oadm policy add-scc-to-user anyuid system:serviceaccount:default:splunk-forwarder
-```
 # TODO
 
 - [x] update openshift origin version
 - [x] makefile to setup software
-- [ ] fix logging to json files in /var/log/containers
+- [x] fix logging to json files in /var/log/containers 
+- [ ] it seems that the userdata script is not setting the docker daemon options properly (they seem to go back to the default) - probably because the ansible script blats whatever we set...
 - [ ] Rebuild, ensure json logging is set up, ensure we can create security groups
 - [ ] image for splunk server
 - [ ] Create a service account for the forwarder which allows host volume mounts
-- [ ] Attach the SA to the DS
+- [x] Attach the SA to the DS
 - [ ] Restart always for the DS
-- [ ] Automate the DS setup on the master node
+- [x] Automate the DS setup on the master node
 - [ ] Ensure the pod and container name are stripped from the logs.
 
 ## Symlink Logs

@@ -21,8 +21,19 @@ open:
 
 # SSH onto the master.
 ssh-master:
-	ssh -t -A -o StrictHostKeyChecking=no ec2-user@$$(terraform output bastion-public_dns) ssh master.openshift.local
+	ssh -t -A ec2-user@$$(terraform output bastion-public_dns) ssh master.openshift.local
+
+# Create sample services.
+sample:
+	oc process -f ./sample/counter-service.yml | oc create -f - 
 
 # Setup splunk.
 splunk:
-	cat oc process -v SPLUNK_FORWARD_SERVER=$$(terraform output splunk-private_ip) | ssh -t -A -o StrictHostKeyChecking=no ec2-user@$$(terraform output bastion-public_dns) ssh master.openshift.local oc create -f
+	sed "s/\$${SPLUNK_FORWARD_SERVER}/$$(terraform output splunk-private_ip)/" ./recipes/splunk/splunk-forwarder.template.yml | ssh -A ec2-user@$$(terraform output bastion-public_dns) ssh master.openshift.local oc create -f -
+	
+	# Create the splunk template with the forwarder ip. Create it on the master.
+	# oc process -v SPLUNK_FORWARD_SERVER=$$(terraform output splunk-private_ip) -f ./recipes/splunk/splunk-forwarder.template.yml \
+		# | ssh -t -A ec2-user@$$(terraform output bastion-public_dns) \
+		# ssh master.openshift.local oc create -f - 
+
+.PHONY: sample
