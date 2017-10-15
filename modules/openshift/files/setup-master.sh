@@ -13,7 +13,7 @@ cat > ./awslogs.conf << EOF
 state_file = /var/awslogs/state/agent-state
 
 [/var/log/messages]
-log_stream_name = {instance_id}
+log_stream_name = openshift-master-{instance_id}
 log_group_name = /var/log/messages
 file = /var/log/messages
 datetime_format = %b %d %H:%M:%S
@@ -21,7 +21,7 @@ buffer_duration = 5000
 initial_position = start_of_file
 
 [/var/log/user-data.log]
-log_stream_name = {instance_id}
+log_stream_name = openshift-master-{instance_id}
 log_group_name = /var/log/user-data.log
 file = /var/log/user-data.log
 EOF
@@ -39,7 +39,7 @@ chkconfig awslogs on
 # See: https://docs.openshift.org/latest/install_config/install/host_preparation.html
 
 # Install packages required to setup OpenShift.
-yum install -y wget git net-tools bind-utils iptables-services bridge-utils bash-completion
+yum install -y wget git net-tools bind-utils iptables-services bridge-utils bash-completion httpd-tools
 yum update -y
 
 # Note: The step below is not in the official docs, I needed it to install
@@ -49,13 +49,6 @@ yum-config-manager --enable rhui-REGION-rhel-server-extras
 
 # Docker setup. Check the version with `docker version`, should be 1.12.
 yum install -y docker
-
-# Update the docker config to allow OpenShift's local insecure registry.
-# It seems that ansible actually does this already for us however, so this step
-# may now be redundant.
-sed -i '/OPTIONS=.*/c\OPTIONS="--selinux-enabled --insecure-registry 172.30.0.0/16 --log-opt max-size=1M --log-opt max-file=3"' \
-  /etc/sysconfig/docker
-systemctl restart docker
 
 # Configure the Docker storage back end to prepare and use our EBS block device.
 # https://docs.openshift.org/latest/install_config/install/host_preparation.html#configuring-docker-storage
@@ -71,3 +64,7 @@ docker-storage-setup
 systemctl stop docker
 rm -rf /var/lib/docker/*
 systemctl restart docker
+
+# Allow the ec2-user to sudo without a tty, which is required when we run post
+# install scripts on the server.
+echo Defaults:ec2-user \!requiretty >> /etc/sudoers
