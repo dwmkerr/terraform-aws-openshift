@@ -2,6 +2,8 @@
 
 This project shows you how to set up OpenShift Origin on AWS using Terraform. This the companion project to my article [Get up and running with OpenShift on AWS](http://www.dwmkerr.com/get-up-and-running-with-openshift-on-aws/).
 
+![OpenShift Sample Project](./docs/openshift-sample.png)
+
 ## Overview
 
 TODO show nice example picture, including the sample services.
@@ -57,7 +59,10 @@ You will be asked to accept the host key of the bastion server (this is so that 
 
 It can take up to 30 minutes to deploy. If this fails with an `ansible` not found error, just run it again.
 
-Open it by hitting port 8443 of the master node. Any username and password will work:
+Open it by hitting port 8443 of the master node, with the credentials below:
+
+Username: admin
+Password: 123
 
 ```bash
 open $(terraform output master-url)
@@ -139,6 +144,22 @@ Bring everything down with:
 ```
 terraform destroy
 ```
+
+## Helper Recipes
+
+There are some recipes in the `makefile` which make common operations a little easier:
+
+| Command                 | Description                                     |
+|-------------------------|-------------------------------------------------|
+| `make infrastructure`   | Runs the terraform commands to build the infra. |
+| `make openshift`        | Installs OpenShift on the infrastructure.       |
+| `make browse-openshift` | Opens the OpenShift console in the browser.     |
+| `make ssh-bastion`      | SSH to the bastion node.                        |
+| `make ssh-master`       | SSH to the master node.                         |
+| `make ssh-node1`        | SSH to node 1.                                  |
+| `make ssh-node2`        | SSH to node 2.                                  |
+| `make sample`           | Creates a simple sample project.                |
+
 
 ## Pricing
 

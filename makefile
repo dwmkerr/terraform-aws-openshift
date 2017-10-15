@@ -12,17 +12,15 @@ openshift:
 	ssh -A ec2-user@$$(terraform output bastion-public_dns) "ssh-keyscan -t rsa -H node1.openshift.local >> ~/.ssh/known_hosts"
 	ssh -A ec2-user@$$(terraform output bastion-public_dns) "ssh-keyscan -t rsa -H node2.openshift.local >> ~/.ssh/known_hosts"
 
-	## Create our inventory from the template and terraform output. 
+	# Create our inventory, copy to the master and run the install script.
 	sed "s/\$${aws_instance.master.public_ip}/$$(terraform output master-public_ip)/" inventory.template.cfg > inventory.cfg
-	
-	## Copy the inventory to the bastion, run the installer.
 	scp ./inventory.cfg ec2-user@$$(terraform output bastion-public_dns):~
-	cat install-from-bastion.sh | ssh -A ec2-user@$$(terraform output bastion-public_dns)
+	cat install-from-bastion.sh | ssh -o StrictHostKeyChecking=no -A ec2-user@$$(terraform output bastion-public_dns)
 
 	# Now the installer is done, run the postinstall steps on each host.
-	cat ./scripts/postinstall-docker-config.sh | ssh -A ec2-user@$$(terraform output bastion-public_dns) ssh master.openshift.local
-	cat ./scripts/postinstall-docker-config.sh | ssh -A ec2-user@$$(terraform output bastion-public_dns) ssh node1.openshift.local
-	cat ./scripts/postinstall-docker-config.sh | ssh -A ec2-user@$$(terraform output bastion-public_dns) ssh node2.openshift.local
+	cat ./scripts/postinstall-master.sh | ssh -A ec2-user@$$(terraform output bastion-public_dns) ssh master.openshift.local
+	cat ./scripts/postinstall-node.sh | ssh -A ec2-user@$$(terraform output bastion-public_dns) ssh node1.openshift.local
+	cat ./scripts/postinstall-node.sh | ssh -A ec2-user@$$(terraform output bastion-public_dns) ssh node2.openshift.local
 
 # Open the console.
 browse-openshift:
