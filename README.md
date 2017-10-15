@@ -57,13 +57,17 @@ You will be asked to accept the host key of the bastion server (this is so that 
 
 It can take up to 30 minutes to deploy. If this fails with an `ansible` not found error, just run it again.
 
-Open it by hitting port 8443 of the master node, with the credentials below:
-
-Username: admin
-Password: 123
+Once the setup is complete, just run:
 
 ```bash
-open $(terraform output master-url)
+make browse-openshift
+```
+
+To open a browser to admin console, use the following credentials to login:
+
+```
+Username: admin
+Password: 123
 ```
 
 ## Accessing and Managing OpenShift
@@ -75,19 +79,20 @@ There are a few ways to access and manage the OpenShift Cluster.
 You can log into the OpenShift console by hitting the console webpage:
 
 ```bash
+make browse-openshift
+
+# the above is really just an alias for this!
 open $(terraform output master-url)
 ```
 
-The url will be something like `https://a.b.c.d.xip.io:8443`, I am using the amazing [xip.io](http://xip.io/) service to provide an address to the service which supports TLS with a valid certificate.
-
-Any username or password combination will work, as 'allow all' authentication is enabled by default.
+The url will be something like `https://a.b.c.d.xip.io:8443`.
 
 ### The Master Node
 
 The master node has the OpenShift client installed and is authenticated as a cluter administrator. If you SSH onto the master node via the bastion, then you can use the OpenShift client and have full access to all projects:
 
 ```
-$ ssh -t -A ec2-user@$(terraform output bastion-public_dns) ssh master.openshift.local
+$ make ssh-master # or if you prefer: ssh -t -A ec2-user@$(terraform output bastion-public_dns) ssh master.openshift.local
 $ oc get pods
 NAME                       READY     STATUS    RESTARTS   AGE
 docker-registry-1-d9734    1/1       Running   0          2h
@@ -112,8 +117,7 @@ From the OpenShift Web Console 'about' page, you can install the `oc` client, wh
 oc login $(terraform output master-url)
 ```
 
-Note that you won't be able to run OpenShift administrative commands. To administer, you'll need to SSH onto the master node.
-
+Note that you won't be able to run OpenShift administrative commands. To administer, you'll need to SSH onto the master node. Use the same credentials (`admin/123`) when logging through the commandline.
 
 ![Welcome Screenshot](./docs/welcome.png)
 
