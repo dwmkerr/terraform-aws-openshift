@@ -50,11 +50,6 @@ yum-config-manager --enable rhui-REGION-rhel-server-extras
 # Docker setup. Check the version with `docker version`, should be 1.12.
 yum install -y docker
 
-# Update the docker config to allow OpenShift's local insecure registry.
-sed -i '/OPTIONS=.*/c\OPTIONS="--selinux-enabled --insecure-registry 172.30.0.0/16 --log-opt max-size=1M --log-opt max-file=3"' \
-/etc/sysconfig/docker
-systemctl restart docker
-
 # Configure the Docker storage back end to prepare and use our EBS block device.
 # https://docs.openshift.org/latest/install_config/install/host_preparation.html#configuring-docker-storage
 # Why xvdf? See:
