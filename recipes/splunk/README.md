@@ -24,19 +24,6 @@ tar xvzf splunk_package_name.tgz -C /opt
 
 Installation instructions: https://docs.splunk.com/Documentation/Splunk/6.5.3/Installation/InstallonLinux
 
-# TODO
-
-- [x] update openshift origin version
-- [x] makefile to setup software
-- [x] fix logging to json files in /var/log/containers 
-- [x] it seems that the userdata script is not setting the docker daemon options properly (they seem to go back to the default) - probably because the ansible script blats whatever we set...
-- [x] Rebuild, ensure json logging is set up, ensure we can create security groups
-- [ ] image for splunk server
-- [x] Create a service account for the forwarder which allows host volume mounts
-- [x] Attach the SA to the DS
-- [x] Automate the DS setup on the master node
-- [x] Ensure the pod and container name are stripped from the logs.
-
 # Bonus
 
 - [ ] Avoid first time login password reset warning
