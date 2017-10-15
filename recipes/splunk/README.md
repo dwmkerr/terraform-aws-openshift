@@ -29,7 +29,7 @@ Installation instructions: https://docs.splunk.com/Documentation/Splunk/6.5.3/In
 - [x] update openshift origin version
 - [x] makefile to setup software
 - [x] fix logging to json files in /var/log/containers 
-- [ ] it seems that the userdata script is not setting the docker daemon options properly (they seem to go back to the default) - probably because the ansible script blats whatever we set...
+- [x] it seems that the userdata script is not setting the docker daemon options properly (they seem to go back to the default) - probably because the ansible script blats whatever we set...
 - [x] Rebuild, ensure json logging is set up, ensure we can create security groups
 - [ ] image for splunk server
 - [x] Create a service account for the forwarder which allows host volume mounts
@@ -49,6 +49,13 @@ Use the following filter:
 ```
  | rex field=source "\/var\/log\/containers\/(?<pod>[a-zA-Z0-9-]*)_(?<namespace>[a-zA-Z0-9]*)_(?<container>[a-zA-Z0-9]*)-(?<conatinerid>[a-zA-Z0-9_]*)"
 ```
+
+This example query shows all of the events from the counter logs:
+
+```
+source="/var/log/containers/counter-1-*"  | rex field=source "\/var\/log\/containers\/(?<pod>[a-zA-Z0-9-]*)_(?<namespace>[a-zA-Z0-9]*)_(?<container>[a-zA-Z0-9]*)-(?<conatinerid>[a-zA-Z0-9_]*)" | table time, host, namespace, pod, container, log
+```
+
 
 ## Symlink Logs
 

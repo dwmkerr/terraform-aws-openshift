@@ -42,6 +42,8 @@ ssh-node2:
 
 # Create sample services.
 sample:
+	oc login $(terraform output master-url) --insecure-skip-tls-verify=true -u=admin -p=123
+	oc new-project sample
 	oc process -f ./sample/counter-service.yml | oc create -f - 
 
 # Setup splunk.
