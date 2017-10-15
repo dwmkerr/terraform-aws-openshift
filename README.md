@@ -6,8 +6,6 @@ This project shows you how to set up OpenShift Origin on AWS using Terraform. Th
 
 ## Overview
 
-TODO show nice example picture, including the sample services.
-
 Terraform is used to create infrastructure as shown:
 
 ![Network Diagram](./docs/network-diagram.png)
