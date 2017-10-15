@@ -30,13 +30,25 @@ Installation instructions: https://docs.splunk.com/Documentation/Splunk/6.5.3/In
 - [x] makefile to setup software
 - [x] fix logging to json files in /var/log/containers 
 - [ ] it seems that the userdata script is not setting the docker daemon options properly (they seem to go back to the default) - probably because the ansible script blats whatever we set...
-- [ ] Rebuild, ensure json logging is set up, ensure we can create security groups
+- [x] Rebuild, ensure json logging is set up, ensure we can create security groups
 - [ ] image for splunk server
-- [ ] Create a service account for the forwarder which allows host volume mounts
+- [x] Create a service account for the forwarder which allows host volume mounts
 - [x] Attach the SA to the DS
-- [ ] Restart always for the DS
 - [x] Automate the DS setup on the master node
-- [ ] Ensure the pod and container name are stripped from the logs.
+- [x] Ensure the pod and container name are stripped from the logs.
+
+# Bonus
+
+- [ ] Avoid first time login password reset warning
+- [ ] Auto strip details from the logs
+
+## Extracting the Pod Name, Container Name, Container ID etc
+
+Use the following filter:
+
+```
+ | rex field=source "\/var\/log\/containers\/(?<pod>[a-zA-Z0-9-]*)_(?<namespace>[a-zA-Z0-9]*)_(?<container>[a-zA-Z0-9]*)-(?<conatinerid>[a-zA-Z0-9_]*)"
+```
 
 ## Symlink Logs
 

@@ -50,12 +50,6 @@ yum-config-manager --enable rhui-REGION-rhel-server-extras
 # Docker setup. Check the version with `docker version`, should be 1.12.
 yum install -y docker
 
-# Update the docker config to allow OpenShift's local insecure registry. Also
-# use json-file for logging, so our Splunk forwarder can eat the container logs.
-# json-file for logging 
-sed -i '/OPTIONS=.*/c\OPTIONS="--selinux-enabled --insecure-registry 172.30.0.0/16 --log-driver=json-file --log-opt max-size=1M --log-opt max-file=3"' /etc/sysconfig/docker
-systemctl restart docker
-
 # Configure the Docker storage back end to prepare and use our EBS block device.
 # https://docs.openshift.org/latest/install_config/install/host_preparation.html#configuring-docker-storage
 # Why xvdf? See:
@@ -70,3 +64,7 @@ docker-storage-setup
 systemctl stop docker
 rm -rf /var/lib/docker/*
 systemctl restart docker
+
+# Allow the ec2-user to sudo without a tty, which is required when we run post
+# install scripts on the server.
+echo Defaults:ec2-user \!requiretty >> /etc/sudoers

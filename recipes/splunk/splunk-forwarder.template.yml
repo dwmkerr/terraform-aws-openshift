@@ -12,9 +12,6 @@ spec:
         name: splunk-forwarder
     spec:
       serviceAccountName: splunk-forwarder
-      # securityContext:
-      # runAsUser: 0
-      # privileged: true
       restartPolicy: Always
       nodeSelector:
         region: primary
@@ -30,8 +27,9 @@ spec:
           value: root
         - name: SPLUNK_FORWARD_SERVER
           value: "${SPLUNK_FORWARD_SERVER}:9997"
+        # Monitor the containers logs.
         - name: SPLUNK_ADD_1
-          value: "monitor /var/log"
+          value: "monitor /var/log/containers"
         volumeMounts:
         - mountPath: /var/run/docker.sock
           readOnly: true
