@@ -17,11 +17,16 @@ openshift:
 	scp ./inventory.cfg ec2-user@$$(terraform output bastion-public_dns):~
 	cat install-from-bastion.sh | ssh -o StrictHostKeyChecking=no -A ec2-user@$$(terraform output bastion-public_dns)
 
-# Utility commands to open consoles.
+	# Now the installer is done, run the postinstall steps on each host.
+	cat ./scripts/postinstall-master.sh | ssh -A ec2-user@$$(terraform output bastion-public_dns) ssh master.openshift.local
+	cat ./scripts/postinstall-node.sh | ssh -A ec2-user@$$(terraform output bastion-public_dns) ssh node1.openshift.local
+	cat ./scripts/postinstall-node.sh | ssh -A ec2-user@$$(terraform output bastion-public_dns) ssh node2.openshift.local
+
+# Open the console.
 browse-openshift:
 	open $$(terraform output master-url)
 
-# Utility commands to SSH onto nodes.
+# SSH onto the master.
 ssh-bastion:
 	ssh -t -A ec2-user@$$(terraform output bastion-public_dns)
 ssh-master:
@@ -33,7 +38,7 @@ ssh-node2:
 
 # Create sample services.
 sample:
-	oc login $(terraform output master-url) --insecure-skip-tls-verify=true -u=admin -p=123
+	oc login $$(terraform output master-url) --insecure-skip-tls-verify=true -u=admin -p=123
 	oc new-project sample
 	oc process -f ./sample/counter-service.yml | oc create -f - 
 

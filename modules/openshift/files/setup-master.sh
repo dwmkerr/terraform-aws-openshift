@@ -13,7 +13,7 @@ cat > ./awslogs.conf << EOF
 state_file = /var/awslogs/state/agent-state
 
 [/var/log/messages]
-log_stream_name = {instance_id}
+log_stream_name = openshift-master-{instance_id}
 log_group_name = /var/log/messages
 file = /var/log/messages
 datetime_format = %b %d %H:%M:%S
@@ -21,7 +21,7 @@ buffer_duration = 5000
 initial_position = start_of_file
 
 [/var/log/user-data.log]
-log_stream_name = {instance_id}
+log_stream_name = openshift-master-{instance_id}
 log_group_name = /var/log/user-data.log
 file = /var/log/user-data.log
 EOF
@@ -41,9 +41,6 @@ chkconfig awslogs on
 # Install packages required to setup OpenShift.
 yum install -y wget git net-tools bind-utils iptables-services bridge-utils bash-completion httpd-tools
 yum update -y
-
-# Create an htpasswd file, we'll use htpasswd auth for OpenShift.
-htpasswd -cb /etc/origin/master/htpasswd admin 123
 
 # Note: The step below is not in the official docs, I needed it to install
 # Docker. If anyone finds out why, I'd love to know.
@@ -67,3 +64,7 @@ docker-storage-setup
 systemctl stop docker
 rm -rf /var/lib/docker/*
 systemctl restart docker
+
+# Allow the ec2-user to sudo without a tty, which is required when we run post
+# install scripts on the server.
+echo Defaults:ec2-user \!requiretty >> /etc/sudoers

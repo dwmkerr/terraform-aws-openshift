@@ -13,7 +13,7 @@ cat > ./awslogs.conf <<- EOF
 state_file = /var/awslogs/state/agent-state
 
 [/var/log/messages]
-log_stream_name = {instance_id}
+log_stream_name = openshift-node-{instance_id}
 log_group_name = /var/log/messages
 file = /var/log/messages
 datetime_format = %b %d %H:%M:%S
@@ -21,7 +21,7 @@ buffer_duration = 5000
 initial_position = start_of_file
 
 [/var/log/user-data.log]
-log_stream_name = {instance_id}
+log_stream_name = openshift-node-{instance_id}
 log_group_name = /var/log/user-data.log
 file = /var/log/user-data.log
 EOF
@@ -64,3 +64,7 @@ docker-storage-setup
 systemctl stop docker
 rm -rf /var/lib/docker/*
 systemctl restart docker
+
+# Allow the ec2-user to sudo without a tty, which is required when we run post
+# install scripts on the server.
+echo Defaults:ec2-user \!requiretty >> /etc/sudoers
