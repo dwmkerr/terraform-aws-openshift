@@ -1,3 +1,14 @@
+## TODO
+
+- Good front page image
+- Appendix on log engines
+- Why not fluentd?
+- Prior art
+- Complete merge from recipe to master
+- Update README.md with the splunk recipe
+
+
+
 First, grab the repo:
 
 ```
@@ -19,16 +30,19 @@ Now we've got the code, we can get started!
 
 ## Create the Infrastructure
 
-TODO note you need AWS
-TODO note you need money for the instances
+To create the cluster, you'll need to install the [AWS CLI](https://aws.amazon.com/cli/) and log in, and install [Terraform](https://www.terraform.io/downloads.html).
 
-Just run:
+Before you continue, <font color="red">**be aware**</font>: the machines on AWS we'll create are going to run to about $250 per month:
+
+![AWS Cost Calculator](/content/images/2017/10/aws-cost.png)
+
+Once you are logged in with the AWS CLI just run:
 
 ```bash
 make infrastructure
 ```
 
-To create the infrastructure, using [Hashicorp Terraform](https://www.terraform.io). You'll be asked to specify a region:
+You'll be asked to specify a region:
 
 ![Specify Region](/content/images/2017/10/region.png)
 
@@ -36,7 +50,7 @@ Any [AWS region](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-region
 
 It'll take about 5 minutes for Terraform to build the required infrastructure, which looks like this:
 
-You can see more detail here: TODO recipe page
+![AWS Infrastructure](/content/images/2017/10/splunk-architecture.png)
 
 Once it's done you'll see a message like this:
 
@@ -56,15 +70,19 @@ make openshift
 
 This command will take quite some time to run (sometimes up to 30 minutes). Once it is complete you'll see a message like this:
 
-![TODO]
+![OpenShift Installation Complete](/content/images/2017/10/openshift-complete.png)
 
-You can now open the OpenShift console. Use the public address of the master node (which you can get with `$(terraform output master-url)`). There's a convenience function for this too:
+You can now open the OpenShift console. Use the public address of the master node (which you can get with `$(terraform output master-url)`), or just run:
 
 ```bash
 make browse-openshift
 ```
 
-The default username and password is `admin` and `123`. You'll see we have a clean installation and are ready to create our first project. Close the console for now.
+The default username and password is `admin` and `123`. You'll see we have a clean installation and are ready to create our first project:
+
+![Welcome to OpenShift](/content/images/2017/10/welcome-to-openshift.png)
+
+Close the console for now.
 
 ## Installing Splunk
 
@@ -80,7 +98,11 @@ Once this command is complete, you can open the Splunk console with:
 make browse-splunk
 ```
 
-Again the username and password is `admin` and `123`. You can change the password on login, or leave it. Splunk will start a welcome tour. You can now close this console too.
+Again the username and password is `admin` and `123`. You can change the password on login, or leave it:
+
+![Splunk Login](/content/images/2017/10/splunk-home.png)
+
+You can close the Splunk console now, we'll come back to it shortly.
 
 ## Demoing Splunk and OpenShift
 
@@ -90,13 +112,21 @@ To see Splunk and OpenShift in action, it helps to have some kind of processing 
 make sample
 ```
 
+This will create a simple 'counter' service:
+
+![Screenshot: The counter service](/content/images/2017/10/counter-service.png)
+
+We can see the logs in OpenShift:
+
+![Screenshot: The counter service logs](/content/images/2017/10/counter-service-logs.png)
+
 Almost immediately you'll be able to see the data in Splunk:
 
-![]()
+![Screenshot: The Splunk data explorer](/content/images/2017/10/counter-service-splunk-data-summary.png)
 
 And because of the way the log files are named, we can even rip out the namespace, pod, container and id:
 
-![]()
+![Screenshot: Counter service splunk](/content/images/2017/10/counter-service-splunk.png)
 
 That's it! You have OpenShift running, Splunk set up and automatically forwarding of all container logs. Enjoy!
 
@@ -109,14 +139,22 @@ I've tried to keep the setup as simple as possible. Here's how it works.
 The Docker Engine has a [log driver](https://docs.docker.com/engine/admin/logging/overview/) which determines how container logs are handled. It defaults to the `json-file` driver, which means that logs are written as a json file to:
 
 ```
-/var/log/containers/{container-id}.log
+/var/lib/docker/containers/{container-id}/{container-id}-json.log
 ```
 
-In theory, all we need to do is use a [Splunk Forwarder](http://docs.splunk.com/Documentation/Forwarder/7.0.0/Forwarder/Abouttheuniversalforwarder) to send this file to our indexer... But...
+Or visually:
 
-### How Log Files Are Written - on k8s
+![Diagram: How Docker writes log files](/content/images/2017/10/logging-docker-1.png)
 
-When running on Kubernetes, things are little difference. On machines with `systemd`, the log driver for the docker engine is set to `journald` (see [Kubernetes - Logging Architecture](https://kubernetes.io/docs/concepts/cluster-administration/logging/). It is possible to forward `journald` to Splunk, but only by streaming it to a file and then forwarding the file. Given that we need to use a file as an intermediate, it seems easier just to change the driver back to `json-file` and forward that.
+Normally we wouldn't touch this file, in theory it is supposed to be used internally[^1] and we would use `docker logs <container-id>`.
+
+In theory, all we need to do is use a [Splunk Forwarder](http://docs.splunk.com/Documentation/Forwarder/7.0.0/Forwarder/Abouttheuniversalforwarder) to send this file to our indexer. The only problem is that we only get the container ID from the file name, finding the right container ID for your container can be a pain. However, we are running on Kubernetes, which means the picture is a little different...
+
+### How Log Files Are Written - on Kubernetes
+
+When running on Kubernetes, things are little different. On machines with `systemd`, the log driver for the docker engine is set to `journald` (see [Kubernetes - Logging Architecture](https://kubernetes.io/docs/concepts/cluster-administration/logging/).
+
+It *is* possible to forward `journald` to Splunk, but only by streaming it to a file and then forwarding the file. Given that we need to use a file as an intermediate, it seems easier just to change the driver back to `json-file` and forward that.
 
 So first, we configure the docker engine to use `json-file` (see [this file](https://github.com/dwmkerr/terraform-aws-openshift/blob/recipes/splunk/scripts/postinstall-master.sh)):
 
@@ -128,10 +166,30 @@ Here we just change the options to default to the `json-file` driver, with a max
 
 Now the cool thing about Kubernetes is that it creates symlinks to the log files, which have much more descriptive names:
 
-![TODO symlink diagram]()
+![TODO symlink diagram](/content/images/2017/10/logging-k8s.png)
 
-This means as long as our forwarder has access to these files, we can tail the container log and parse the namespace/pod/container details from the file name.
+We still have the original container log, in the same location. But we also have a pod container log (which is a symlink to the container log) and another container log, which is a symlink to the pod container log.
+
+This means we can read the container log, and extract some really useful information from the file name. The container log file name has the following format:
+
+```
+/var/log/containers/{container-id}/{container-id}-json.log
+```
 
 ## How Log Files Are Read
 
+Now that we are writing the log files to a well defined location, reading them is straightforward. The diagram below shows how we use a splunk-forwarder to complete the picture:
+
+![Diagram: How logs are read]()
+
+First, we create a DaemonSet, which ensures we run a specific pod on every node.
+
+The DaemonSet runs with a new account which has the 'any id' privilege, allowing it to run as root. We then mount the log folders into the container (which are owned by root, which is why our container needs these extra permissions to read the files). 
+
+The pod contains a splunk-forwarder container, which is configured to monitor the `/var/log/containers` folder. It also monitors the docker socket, allowing us to see docker events. The forwarder is also configured with the IP address of the Splunk Indexer.
+
+## Custom Drivers
+
 TODO
+
+[^1]: See https://github.com/moby/moby/issues/29680
