@@ -6,7 +6,7 @@
 - Prior art
 - Complete merge from recipe to master
 - Update README.md with the splunk recipe
-
+- Ask Splunk to remove the dependence on my S3 bucket
 
 
 First, grab the repo:
