@@ -4,6 +4,10 @@ This project shows you how to set up OpenShift Origin on AWS using Terraform. Th
 
 ![OpenShift Sample Project](./docs/openshift-sample.png)
 
+I am also adding some 'recipes' which you can use to mix in more advanced features:
+
+- [Recipe](./)
+
 ## Overview
 
 Terraform is used to create infrastructure as shown:
@@ -18,7 +22,7 @@ created, which is used to install the OpenShift Origin platform on the hosts.
 You need:
 
 1. [Terraform](https://www.terraform.io/intro/getting-started/install.html) - `brew update && brew install terraform`
-2. An AWS account, configured with the cli locally - 
+2. An AWS account, configured with the cli locally -
 ```
 if [[ "$unamestr" == 'Linux' ]]; then
         dnf install -y awscli || yum install -y awscli
@@ -157,9 +161,9 @@ Bring everything down with:
 terraform destroy
 ```
 
-## Helper Recipes
+## Makefile Commands
 
-There are some recipes in the `makefile` which make common operations a little easier:
+There are some commands in the `makefile` which make common operations a little easier:
 
 | Command                 | Description                                     |
 |-------------------------|-------------------------------------------------|
@@ -172,13 +176,33 @@ There are some recipes in the `makefile` which make common operations a little e
 | `make ssh-node2`        | SSH to node 2.                                  |
 | `make sample`           | Creates a simple sample project.                |
 
-
 ## Pricing
 
 You'll be paying for:
 
 - 1 x m4.xlarge instance
 - 2 x t2.large instances
+
+## Recipe - Adding Splunk
+
+To integrate with splunk, merge the `recipes/splunk` branch then run `make splunk` after creating the infrastructure and installing OpenShift:
+
+```
+git merge recipes/splunk
+make infracture
+make openshift
+make splunk
+```
+
+There is a full guide at:
+
+TODO
+
+You can quickly rip out container details from the log files with this filter:
+
+```
+source="/var/log/containers/counter-1-*"  | rex field=source "\/var\/log\/containers\/(?<pod>[a-zA-Z0-9-]*)_(?<namespace>[a-zA-Z0-9]*)_(?<container>[a-zA-Z0-9]*)-(?<conatinerid>[a-zA-Z0-9_]*)" | table time, host, namespace, pod, container, log
+```
 
 ## Troubleshooting
 
