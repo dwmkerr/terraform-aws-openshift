@@ -39,14 +39,14 @@ Create the infrastructure first:
 # Make sure ssh agent is on, you'll need it later.
 eval `ssh-agent -s`
 
-# Get the modules, create the infrastructure.
-terraform get && terraform apply
+# Create the infrastructure.
+make infrastructure
 ```
 
 You will be asked for a region to deploy in, use `us-east-1` or your preferred region. You can configure the nuances of how the cluster is created in the [`main.tf`](./main.tf) file. Once created, you will see a message like:
 
 ```
-$ terraform apply
+$ make infrastructure
 var.region
   Region to deploy the cluster into
 
