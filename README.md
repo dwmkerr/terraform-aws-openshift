@@ -196,7 +196,7 @@ make splunk
 
 There is a full guide at:
 
-TODO
+http://www.dwmkerr.com/integrating-openshift-and-splunk-for-logging/
 
 You can quickly rip out container details from the log files with this filter:
 
