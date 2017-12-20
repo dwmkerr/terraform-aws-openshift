@@ -6,7 +6,28 @@ This project shows you how to set up OpenShift Origin on AWS using Terraform. Th
 
 I am also adding some 'recipes' which you can use to mix in more advanced features:
 
-- [Recipe](./)
+- [Recipe - Splunk](#recipe-adding-splunk)
+
+## Index
+
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+- [Creating the Cluster](#creating-the-cluster)
+- [Installing OpenShift](#installing-openshift)
+- [Accessing and Managing OpenShift](#accessing-and-managing-openshift)
+	- [OpenShift Web Console](#openshift-web-console)
+	- [The Master Node](#the-master-node)
+	- [The OpenShift Client](#the-openshift-client)
+- [Connecting to the Docker Registry](#connecting-to-the-docker-registry)
+- [Additional Configuration](#additional-configuration)
+- [Choosing the OpenShift Version](#choosing-the-openshift-version)
+- [Destroying the Cluster](#destroying-the-cluster)
+- [Makefile Commands](#makefile-commands)
+- [Pricing](#pricing)
+- [Recipes](#recipes)
+  - [Splunk](#splunk)
+- [Troubleshooting](#troubleshooting)
+- [References](#references)
 
 ## Overview
 
@@ -133,7 +154,39 @@ oc login $(terraform output master-url)
 
 Note that you won't be able to run OpenShift administrative commands. To administer, you'll need to SSH onto the master node. Use the same credentials (`admin/123`) when logging through the commandline.
 
-![Welcome Screenshot](./docs/welcome.png)
+## Connecting to the Docker Registry
+
+The OpenShift cluster contains a Docker Registry by default. You can connect to the Docker Registry, to push and pull images directly, by following the steps below.
+
+First, make sure you are connected to the cluster with [The OpenShift Client](#The-OpenShift-Client):
+
+```bash
+oc login $(terraform output master-url)
+```
+
+Now check the address of the Docker Registry. Your Docker Registry url is just your master url with `docker-registry-default.` at the beginning:
+
+```
+% echo $(terraform output master-url)
+https://54.85.76.73.xip.io:8443
+```
+
+In the example above, my registry url is `https://docker-registry-default.54.85.76.73.xip.io:8443`. You can also get this url by running `oc get routes -n default` on the master node.
+
+You will need to add this registry to the list of untrusted registries. The documentation for how to do this here https://docs.docker.com/registry/insecure/. On a Mac, the easiest way to do this is open the Docker Preferences, go to 'Daemon' and add the address to the list of insecure regsitries:
+
+![Docker Insecure Registries Screenshot](docs/insecure-registry.png)
+
+Finally you can log in. Your Docker Registry username is your OpenShift username (`admin` by default) and your password is your short-lived OpenShift login token, which you can get with `oc whoami -t`:
+
+```
+% docker login docker-registry-default.54.85.76.73.xip.io -u admin -p `oc whoami -t`
+Login Succeeded
+```
+
+You are now logged into the registry. You can also use the registry web interface, which in the example above is at: https://registry-console-default.54.85.76.73.xip.io
+
+![Atomic Registry Screenshot](./docs/atomic-registry.png)
 
 ## Additional Configuration
 
@@ -183,7 +236,15 @@ You'll be paying for:
 - 1 x m4.xlarge instance
 - 2 x t2.large instances
 
-## Recipe - Adding Splunk
+## Recipes
+
+Your installation can be extended with recipes.
+
+### Splunk
+
+You can quickly add Splunk to your setup using the Splunk recipe:
+
+![Splunk Screenshot](docs/splunk.png)
 
 To integrate with splunk, merge the `recipes/splunk` branch then run `make splunk` after creating the infrastructure and installing OpenShift:
 
