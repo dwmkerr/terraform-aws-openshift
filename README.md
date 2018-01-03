@@ -6,7 +6,7 @@ This project shows you how to set up OpenShift Origin on AWS using Terraform. Th
 
 I am also adding some 'recipes' which you can use to mix in more advanced features:
 
-- [Recipe - Splunk](#recipe-adding-splunk)
+- [Recipe - Splunk](#splunk)
 
 ## Index
 
