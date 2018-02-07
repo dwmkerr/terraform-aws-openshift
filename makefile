@@ -1,6 +1,6 @@
 infrastructure:
 	# Get the modules, create the infrastructure.
-	terraform get && terraform apply
+	terraform init && terraform get && terraform apply
 
 # Installs OpenShift on the cluster.
 openshift:
@@ -12,8 +12,7 @@ openshift:
 	ssh -A ec2-user@$$(terraform output bastion-public_dns) "ssh-keyscan -t rsa -H node1.openshift.local >> ~/.ssh/known_hosts"
 	ssh -A ec2-user@$$(terraform output bastion-public_dns) "ssh-keyscan -t rsa -H node2.openshift.local >> ~/.ssh/known_hosts"
 
-	# Create our inventory, copy to the master and run the install script.
-	sed "s/\$${aws_instance.master.public_ip}/$$(terraform output master-public_ip)/" inventory.template.cfg > inventory.cfg
+	# Copy our inventory to the master and run the install script.
 	scp ./inventory.cfg ec2-user@$$(terraform output bastion-public_dns):~
 	cat install-from-bastion.sh | ssh -o StrictHostKeyChecking=no -A ec2-user@$$(terraform output bastion-public_dns)
 
@@ -40,6 +39,6 @@ ssh-node2:
 sample:
 	oc login $$(terraform output master-url) --insecure-skip-tls-verify=true -u=admin -p=123
 	oc new-project sample
-	oc process -f ./sample/counter-service.yml | oc create -f - 
+	oc process -f ./sample/counter-service.yml | oc create -f -
 
 .PHONY: sample

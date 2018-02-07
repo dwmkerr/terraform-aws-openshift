@@ -2,6 +2,7 @@
 .terraform
 terraform.tfvars
 terraform.tfstate
+terraform.tfstate.backup
 
 # The generated inventory file.
 inventory.cfg
