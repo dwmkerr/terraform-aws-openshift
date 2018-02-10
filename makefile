@@ -42,4 +42,8 @@ sample:
 	oc new-project sample
 	oc process -f ./sample/counter-service.yml | oc create -f - 
 
+# Run the tests.
+test:
+	echo "Simulating tests..."
+
 .PHONY: sample
