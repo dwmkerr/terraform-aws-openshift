@@ -42,6 +42,10 @@ sample:
 	oc new-project sample
 	oc process -f ./sample/counter-service.yml | oc create -f - 
 
+# Lint the terraform files. Error on issues, suitable for CI.
+lint:
+	tflint --error-with-issues
+
 # Run the tests.
 test:
 	echo "Simulating tests..."

@@ -1,17 +1,38 @@
 version: 2
 jobs:
-  test:
+  lint:
     docker:
       - image: circleci/node:8
     steps:
       - checkout
+      - run:
+          name: Install linter
+          command: |
+            wget https://github.com/wata727/tflint/releases/download/v0.5.4/tflint_darwin_amd64.zip
+            unzip tflint_darwin_amd64.zip
+            mkdir -p /usr/local/tflint/bin
+            export PATH=/usr/local/tflint/bin:$PATH
+            install tflint /usr/local/tflint/bin
+            tflint -v
+            |
+      - run:
+          name: Terraform Lint
+          command: make lint
+  test:
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout:
       - run: make test
 
 workflows:
   version: 2
   test:
     jobs:
+      - lint
       - hold:
+          requires:
+            - lint
           type: approval
       - test:
           requires:
