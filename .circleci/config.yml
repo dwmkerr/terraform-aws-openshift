@@ -2,29 +2,12 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:8
+      - image: dwmkerr/terraform-ci:0.1.0
     steps:
-      # Restore tflint if available.
-      - restore_cache:
-          key: v1-tflint-0.5.4
-      # Check if tflint is availabe, if not, install it.
-      - run:
-          name: Install linter
-          command: |
-            if ! [ $(which tflint) ]; then 
-              wget https://github.com/wata727/tflint/releases/download/v0.5.4/tflint_linux_amd64.zip
-              unzip tflint_darwin_amd64.zip
-              sudo install tflint /usr/local/bin
-              sudo chmod ugo+x /usr/local/bin/tflint
-              tflint -v
-            fi
-      # Save tflint to the cache if we've installed it.
-      - save_cache:
-          key: v1-tflint-0.5.4
-          paths:            
-            - /usr/local/bin/phantomjs
-      # Checkout and lint.
       - checkout
+      - run:
+          name: Terraform Setup
+          command: terraform init && terraform get
       - run:
           name: Terraform Lint
           command: make lint
@@ -32,8 +15,8 @@ jobs:
     docker:
       - image: circleci/node:8
     steps:
-      - checkout:
-      - run: make test
+      - checkout
+      - image: dwmkerr/terraform-ci:0.1.0
 
 workflows:
   version: 2
