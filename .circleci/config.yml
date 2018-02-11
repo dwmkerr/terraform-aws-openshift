@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  lint:
+  build:
     docker:
       - image: circleci/node:8
     steps:
@@ -12,7 +12,7 @@ jobs:
           name: Install linter
           command: |
             if ! [ $(which tflint) ]; then 
-              wget https://github.com/wata727/tflint/releases/download/v0.5.4/tflint_darwin_amd64.zip
+              wget https://github.com/wata727/tflint/releases/download/v0.5.4/tflint_linux_amd64.zip
               unzip tflint_darwin_amd64.zip
               sudo install tflint /usr/local/bin
               sudo chmod ugo+x /usr/local/bin/tflint
@@ -39,10 +39,10 @@ workflows:
   version: 2
   test:
     jobs:
-      - lint
+      - build
       - hold:
           requires:
-            - lint
+            - build
           type: approval
       - test:
           requires:

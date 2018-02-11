@@ -50,4 +50,9 @@ lint:
 test:
 	echo "Simulating tests..."
 
+# Run the CircleCI build locally.
+circleci:
+	circleci config validate -c .circleci/config.yml
+	circleci build
+
 .PHONY: sample
