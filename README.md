@@ -289,6 +289,26 @@ systemctl restart origin-master.service
 
 You should now be able to deploy. [More info here](https://github.com/dwmkerr/docs/blob/master/openshift.md#failed-to-pull-image-unsupported-schema-version-2).
 
+## Developer Guide
+
+This section is intended for those who want to update or modify the code.
+
+### CI
+
+[CircleCI 2]() is used to run builds. You can run a CircleCI build locally with:
+
+```bash
+make circleci
+```
+
+### Linting
+
+[`tflint`](https://github.com/wata727/tflint) is used to lint the code on the CI server. You can lint the code locally with:
+
+```bash
+make lint
+```
+
 ## References
 
  - https://www.udemy.com/openshift-enterprise-installation-and-configuration - The basic structure of the network is based on this course.

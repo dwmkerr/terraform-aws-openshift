@@ -42,9 +42,10 @@ sample:
 	oc new-project sample
 	oc process -f ./sample/counter-service.yml | oc create -f - 
 
-# Lint the terraform files. Error on issues, suitable for CI.
+# Lint the terraform files. Don't forget to provide the 'region' var, as it is
+# not provided by default. Error on issues, suitable for CI.
 lint:
-	tflint --error-with-issues
+	TF_VAR_region="us-east-1" tflint --error-with-issues
 
 # Run the tests.
 test:
