@@ -6,3 +6,4 @@ terraform.tfstate
 # The generated inventory file.
 inventory.cfg
 *.lock.info
+.private.env

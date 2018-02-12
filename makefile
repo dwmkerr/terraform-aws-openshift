@@ -53,7 +53,13 @@ test:
 
 # Run the CircleCI build locally.
 circleci:
-	circleci config validate -c .circleci/config.yml
-	circleci build
+	# circleci config validate -c .circleci/config.yml
+	# circleci build --job lint
+	# circleci build --job plan \
+		# -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+		# -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+	circleci build --job apply \
+		-e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+		-e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
 
 .PHONY: sample

@@ -301,6 +301,13 @@ This section is intended for those who want to update or modify the code.
 make circleci
 ```
 
+The following environment variables must be set for CI builds (both on CircleCI or when running locally with `make circleci`):
+
+| Environment Variable | Usage |
+|----------------------|-------|
+| `AWS_ACCESS_KEY_ID` | Access Key ID for the AWS IAM user to create infrastructure as. |
+| `AWS_SECRET_ACCESS_KEY` | Secret Access Key for the AWS IAM user to create infrastructure as. |
+
 ### Linting
 
 [`tflint`](https://github.com/wata727/tflint) is used to lint the code on the CI server. You can lint the code locally with:

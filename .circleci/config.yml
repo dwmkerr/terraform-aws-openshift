@@ -1,32 +1,104 @@
-version: 2
+# Job defaults, which are common across all jobs.
+job_defaults: &job_defaults
+  working_directory: /terraform-aws-openshift
+  docker:
+    - image: dwmkerr/terraform-ci:0.1.0
+  environment:
+    # We don't use the default ~/.ssh/id_rsa key, we create our own in the
+    # workspace.
+    - TF_VAR_public_key_path: "/terraform-aws-openshift/sshkey.pub" 
+
 jobs:
-  build:
-    docker:
-      - image: dwmkerr/terraform-ci:0.1.0
+  # Lint the Terraform code.
+  lint:
+    <<: *job_defaults
     steps:
       - checkout
-      - run:
-          name: Terraform Setup
-          command: terraform init && terraform get
+      # Init Terraform.
+      - run: terraform init && terraform get && terraform refresh
       - run:
           name: Terraform Lint
           command: make lint
-  test:
-    docker:
-      - image: circleci/node:8
+      - persist_to_workspace:
+          root: /terraform-aws-openshift
+          paths:
+            - .terraform
+
+  # Create the plan, which we will manually approve. Deletes old infrastructure
+  # first.
+  plan:
+    <<: *job_defaults
     steps:
       - checkout
-      - image: dwmkerr/terraform-ci:0.1.0
+      - attach_workspace:
+          at:  /terraform-aws-openshift
+      # Create the keypair for all future operations.
+      - run:
+          name: Create Keypair
+          command: |
+            ssh-keygen -b 2048 -t rsa -f /terraform-aws-openshift/sshkey -q -N ""
+            ssh-add /terraform-aws-openshift/sshkey
+      # Init Terraform. Cached in workflows, needed for running circle locally.
+      - run: terraform init && terraform get && terraform refresh
+      - run:
+          name: Terraform Cleanup
+          command: terraform destroy -force
+      - run:
+          name: Terraform Plan
+          command: terraform plan
+      - persist_to_workspace:
+          root: /terraform-aws-openshift
+          paths:
+            - .terraform
+            - sshkey
+
+  # Apply the plan, creating the infrastructure.
+  apply:
+    <<: *job_defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at:  /terraform-aws-openshift
+      # Init Terraform. Cached in workflows, needed for running circle locally. Also create the key.
+      - run: |
+            ssh-keygen -b 2048 -t rsa -f /terraform-aws-openshift/sshkey -q -N ""
+            ssh-add /terraform-aws-openshift/sshkey
+      - run: terraform init && terraform get && terraform refresh
+      - run:
+          name: Terraform Apply
+          command: terraform apply -auto-approve
+      - persist_to_workspace:
+          root: /terraform-aws-openshift
+          paths:
+            - .terraform
+
+  # Destroy all old infrastructure.
+  cleanup:
+    <<: *job_defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at:  /terraform-aws-openshift
+      # Init Terraform. Cached in workflows, needed for running circle locally.
+      - run: terraform init && terraform get
+      - run:
+          name: Destroy AWS Infrastructure
+          command: terraform destroy -force
+      - persist_to_workspace:
+          root: /terraform-aws-openshift
+          paths:
+            - .terraform
+            - sshkey
 
 workflows:
   version: 2
   test:
     jobs:
-      - build
-      - hold:
+      - lint
+      - plan:
           requires:
-            - build
+            - lint
           type: approval
-      - test:
+      - apply:
           requires:
-            - hold
+            - plan

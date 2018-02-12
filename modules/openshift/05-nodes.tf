@@ -29,6 +29,7 @@ resource "aws_instance" "master" {
   //  We need at least 30GB for OpenShift, let's be greedy...
   root_block_device {
     volume_size = 50
+    volume_type = "gp2"
   }
 
   # Storage for Docker, see:
@@ -36,6 +37,7 @@ resource "aws_instance" "master" {
   ebs_block_device {
     device_name = "/dev/sdf"
     volume_size = 80
+    volume_type = "gp2"
   }
 
   key_name = "${aws_key_pair.keypair.key_name}"
@@ -71,6 +73,7 @@ resource "aws_instance" "node1" {
   //  We need at least 30GB for OpenShift, let's be greedy...
   root_block_device {
     volume_size = 50
+    volume_type = "gp2"
   }
 
   # Storage for Docker, see:
@@ -78,6 +81,7 @@ resource "aws_instance" "node1" {
   ebs_block_device {
     device_name = "/dev/sdf"
     volume_size = 80
+    volume_type = "gp2"
   }
 
   key_name = "${aws_key_pair.keypair.key_name}"
@@ -103,6 +107,7 @@ resource "aws_instance" "node2" {
   //  We need at least 30GB for OpenShift, let's be greedy...
   root_block_device {
     volume_size = 50
+    volume_type = "gp2"
   }
 
   # Storage for Docker, see:
@@ -110,6 +115,7 @@ resource "aws_instance" "node2" {
   ebs_block_device {
     device_name = "/dev/sdf"
     volume_size = 80
+    volume_type = "gp2"
   }
 
   key_name = "${aws_key_pair.keypair.key_name}"

@@ -63,3 +63,7 @@ resource "aws_iam_instance_profile" "openshift-instance-profile" {
   role = "${aws_iam_role.openshift-instance-role.name}"
 }
 
+//  Create a instance profile for the bastion, which currentl has no policies.
+resource "aws_iam_instance_profile" "bastion-instance-profile" {
+  name  = "bastion-instance-profile"
+}
