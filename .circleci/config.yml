@@ -53,7 +53,7 @@ jobs:
             - sshkey
 
   # Apply the plan, creating the infrastructure.
-  apply:
+  test:
     <<: *job_defaults
     steps:
       - checkout
@@ -63,32 +63,10 @@ jobs:
       - run: |
             ssh-keygen -b 2048 -t rsa -f /terraform-aws-openshift/sshkey -q -N ""
             ssh-add /terraform-aws-openshift/sshkey
-      - run: terraform init && terraform get && terraform refresh
+      - run: mkdir ~/.ssh && cp /terraform-aws-openshift/sshkey* ~/.ssh
       - run:
-          name: Terraform Apply
-          command: terraform apply -auto-approve
-      - persist_to_workspace:
-          root: /terraform-aws-openshift
-          paths:
-            - .terraform
-
-  # Destroy all old infrastructure.
-  cleanup:
-    <<: *job_defaults
-    steps:
-      - checkout
-      - attach_workspace:
-          at:  /terraform-aws-openshift
-      # Init Terraform. Cached in workflows, needed for running circle locally.
-      - run: terraform init && terraform get
-      - run:
-          name: Destroy AWS Infrastructure
-          command: terraform destroy -force
-      - persist_to_workspace:
-          root: /terraform-aws-openshift
-          paths:
-            - .terraform
-            - sshkey
+          name: Setup OpenShift & Run Tests
+          command: ./test/test.sh "/terraform-aws-openshift/sshkey.pub"
 
 workflows:
   version: 2
@@ -99,6 +77,6 @@ workflows:
           requires:
             - lint
           type: approval
-      - apply:
+      - test:
           requires:
             - plan
