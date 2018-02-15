@@ -38,25 +38,6 @@ I am also adding some 'recipes' which you can use to mix in more advanced featur
 
 <!-- /TOC -->
 
-- [Overview](#overview)
-- [Prerequisites](#prerequisites)
-- [Creating the Cluster](#creating-the-cluster)
-- [Installing OpenShift](#installing-openshift)
-- [Accessing and Managing OpenShift](#accessing-and-managing-openshift)
-	- [OpenShift Web Console](#openshift-web-console)
-	- [The Master Node](#the-master-node)
-	- [The OpenShift Client](#the-openshift-client)
-- [Connecting to the Docker Registry](#connecting-to-the-docker-registry)
-- [Additional Configuration](#additional-configuration)
-- [Choosing the OpenShift Version](#choosing-the-openshift-version)
-- [Destroying the Cluster](#destroying-the-cluster)
-- [Makefile Commands](#makefile-commands)
-- [Pricing](#pricing)
-- [Recipes](#recipes)
-  - [Splunk](#splunk)
-- [Troubleshooting](#troubleshooting)
-- [References](#references)
-
 ## Overview
 
 Terraform is used to create infrastructure as shown:
@@ -256,6 +237,7 @@ There are some commands in the `makefile` which make common operations a little 
 | `make ssh-node1`        | SSH to node 1.                                  |
 | `make ssh-node2`        | SSH to node 2.                                  |
 | `make sample`           | Creates a simple sample project.                |
+| `make lint`             | Lints the terraform code.                       |
 
 ## Pricing
 
