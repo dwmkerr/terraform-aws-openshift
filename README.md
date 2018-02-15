@@ -10,7 +10,33 @@ I am also adding some 'recipes' which you can use to mix in more advanced featur
 
 - [Recipe - Splunk](#splunk)
 
-## Index
+**Index**
+
+<!-- TOC depthFrom:2 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+- [Creating the Cluster](#creating-the-cluster)
+- [Installing OpenShift](#installing-openshift)
+- [Accessing and Managing OpenShift](#accessing-and-managing-openshift)
+	- [OpenShift Web Console](#openshift-web-console)
+	- [The Master Node](#the-master-node)
+	- [The OpenShift Client](#the-openshift-client)
+- [Connecting to the Docker Registry](#connecting-to-the-docker-registry)
+- [Additional Configuration](#additional-configuration)
+- [Choosing the OpenShift Version](#choosing-the-openshift-version)
+- [Destroying the Cluster](#destroying-the-cluster)
+- [Makefile Commands](#makefile-commands)
+- [Pricing](#pricing)
+- [Recipes](#recipes)
+	- [Splunk](#splunk)
+- [Troubleshooting](#troubleshooting)
+- [Developer Guide](#developer-guide)
+	- [CI](#ci)
+	- [Linting](#linting)
+- [References](#references)
+
+<!-- /TOC -->
 
 - [Overview](#overview)
 - [Prerequisites](#prerequisites)
