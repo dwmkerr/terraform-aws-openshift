@@ -10,7 +10,9 @@ I am also adding some 'recipes' which you can use to mix in more advanced featur
 
 - [Recipe - Splunk](#splunk)
 
-## Index
+**Index**
+
+<!-- TOC depthFrom:2 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Overview](#overview)
 - [Prerequisites](#prerequisites)
@@ -27,9 +29,14 @@ I am also adding some 'recipes' which you can use to mix in more advanced featur
 - [Makefile Commands](#makefile-commands)
 - [Pricing](#pricing)
 - [Recipes](#recipes)
-  - [Splunk](#splunk)
+	- [Splunk](#splunk)
 - [Troubleshooting](#troubleshooting)
+- [Developer Guide](#developer-guide)
+	- [CI](#ci)
+	- [Linting](#linting)
 - [References](#references)
+
+<!-- /TOC -->
 
 ## Overview
 
@@ -230,6 +237,7 @@ There are some commands in the `makefile` which make common operations a little 
 | `make ssh-node1`        | SSH to node 1.                                  |
 | `make ssh-node2`        | SSH to node 2.                                  |
 | `make sample`           | Creates a simple sample project.                |
+| `make lint`             | Lints the terraform code.                       |
 
 ## Pricing
 
@@ -288,6 +296,28 @@ systemctl restart origin-master.service
 ```
 
 You should now be able to deploy. [More info here](https://github.com/dwmkerr/docs/blob/master/openshift.md#failed-to-pull-image-unsupported-schema-version-2).
+
+## Developer Guide
+
+This section is intended for those who want to update or modify the code.
+
+### CI
+
+[CircleCI 2](https://circleci.com/gh/dwmkerr/terraform-aws-openshift) is used to run builds. You can run a CircleCI build locally with:
+
+```bash
+make circleci
+```
+
+Currently, this build will lint the code (no tests are run).
+
+### Linting
+
+[`tflint`](https://github.com/wata727/tflint) is used to lint the code on the CI server. You can lint the code locally with:
+
+```bash
+make lint
+```
 
 ## References
 
