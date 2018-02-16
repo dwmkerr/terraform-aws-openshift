@@ -40,17 +40,47 @@ function nuke_vpc {
     aws ec2 delete-vpc --vpc-id=${vpc_id}
 }
 
+# TODO: Nuke roles
+# Before you can delete a  role,  you  must  remove  the  role  from  any
+# instance  profile  (remove-role-from-instance-profile), detach any man-
+# aged policies (detach-role-policy) and delete any inline policies  that
+# are attached to the role (delete-role-policy).
+function nuke_role {
+    role_name=$1
+
+    # Get each instance profile for the role.
+    aws iam list-instance-profiles-for-role --role-name "${role_name}" \
+        | jq -r .InstanceProfiles[].InstanceProfileName \
+        | xargs -I {} "aws iam remove-role-from-instance-profile --instance-profile-name="{}" --role-name=${role_name}"
+
+    # Detach each policy from the role.
+    aws iam list-attached-role-policies --role-name "${role_name}" \
+        | jq -r .AttachedPolicies[].PolicyArn \
+        | xargs -I {} aws iam detach-role-policy --policy-arn={} --role-name=${role_name}
+
+    # TODO: detach inline policies.
+
+    # Delete the role.
+    aws iam delete-role --role-name="${role_name}"
+     
+}
+
+
 # Delete VPCs.
-vpcs=$(aws ec2 describe-vpcs --filter Name=tag:Project,Values=openshift | jq -r .Vpcs[].VpcId)
-while read -r vpc_id; do
-    echo "Deleting vpc ${vpc_id}"
-    nuke_vpc $vpc_id
-done <<< "$vpcs"
+# vpcs=$(aws ec2 describe-vpcs --filter Name=tag:Project,Values=openshift | jq -r .Vpcs[].VpcId)
+# while read -r vpc_id; do
+    # echo "Deleting vpc ${vpc_id}"
+    # nuke_vpc $vpc_id
+# done <<< "$vpcs"
+
+# Delete the roles.
+# nuke_role "openshift-instance-role"
 
 
 aws iam delete-instance-profile --instance-profile-name openshift-instance-profile
 aws iam delete-instance-profile --instance-profile-name bastion-instance-profile
 arn="arn:aws:iam::${account}:policy/openshift-instance-forward-logs"
-aws iam detach-role-policy --role-name openshift-instance-role --policy-arn ${arn}
 aws iam delete-policy --policy-arn "${arn}"
-aws iam delete-role --role-name openshift-instance-role
+
+# Delete the keypair.
+aws ec2 delete-key-pair --key-name openshift
