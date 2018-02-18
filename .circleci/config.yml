@@ -1,0 +1,33 @@
+version: 2
+
+# Job defaults, which are common across all jobs.
+job_defaults: &job_defaults
+  working_directory: /terraform-aws-openshift
+  docker:
+    - image: dwmkerr/terraform-ci:0.1.0
+
+# Define the jobs available to the workflow.
+jobs:
+  # Lint the Terraform code.
+  lint:
+    <<: *job_defaults
+    steps:
+      - checkout
+      # Init Terraform.
+      - run: terraform init && terraform get
+      - run:
+          name: Terraform Lint
+          command: make lint
+      # We do not yet run any additional steps, but when we do it is important
+      # to persist terraform state in the workspace.
+      - persist_to_workspace:
+          root: /terraform-aws-openshift
+          paths:
+            - .terraform
+
+# The workflow simply runs the lint job.
+workflows:
+  version: 2
+  test:
+    jobs:
+      - lint

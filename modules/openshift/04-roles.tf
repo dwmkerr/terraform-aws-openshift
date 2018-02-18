@@ -62,6 +62,13 @@ resource "aws_iam_instance_profile" "openshift-instance-profile" {
   role = "${aws_iam_role.openshift-instance-role.name}"
 }
 
+//  Create a instance profile for the bastion. All profiles need a role, so use
+//  our simple openshift instance role.
+resource "aws_iam_instance_profile" "bastion-instance-profile" {
+  name  = "bastion-instance-profile"
+  role = "${aws_iam_role.openshift-instance-role.name}"
+}
+
 //  Create a user and access key for openshift-only permissions
 resource "aws_iam_user" "openshift-aws-user" {
   name = "openshift-aws-user"
