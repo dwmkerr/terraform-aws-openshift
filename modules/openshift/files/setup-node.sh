@@ -7,6 +7,12 @@
 set -x
 exec > /var/log/user-data.log 2>&1
 
+mkdir -p /etc/aws/
+cat > /etc/aws/aws.conf <<- EOF
+[Global]
+Zone = ${availability_zone}
+EOF
+
 # Create initial logs config.
 cat > ./awslogs.conf <<- EOF
 [general]
