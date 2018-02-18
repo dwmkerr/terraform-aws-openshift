@@ -197,6 +197,20 @@ You are now logged into the registry. You can also use the registry web interfac
 
 ![Atomic Registry Screenshot](./docs/atomic-registry.png)
 
+## Persistent Volumes
+
+The cluster is set up with support for dynamic provisioning of AWS EBS volumes. This means that persistent volumes are supported. By default, when a user creates a PVC, an EBS volume will automatically be set up to fulfil the claim.
+
+More details are available at:
+
+- https://blog.openshift.com/using-dynamic-provisioning-and-storageclasses/
+- https://docs.openshift.org/latest/install_config/persistent_storage/persistent_storage_aws.html
+
+No additional should be required for the operator to set up the cluster.
+
+Note that dynamically provisioned EBS volumes will not be destroyed when running `terrform destroy`. The will have to be destroyed manuallly when bringing down the cluster.
+
+
 ## Additional Configuration
 
 The easiest way to configure is to change the settings in the [./inventory.template.cfg](./inventory.template.cfg) file, based on settings in the [OpenShift Origin - Advanced Installation](https://docs.openshift.org/latest/install_config/install/advanced_install.html) guide.
@@ -222,6 +236,8 @@ Bring everything down with:
 ```
 terraform destroy
 ```
+
+Resources which are dynamically provisioned by Kubernetes will not automatically be destroyed. This means that if you want to clean up the entire cluster, you must manually delete all of the EBS Volumes which have been provisioned to serve Persistent Volume Claims.
 
 ## Makefile Commands
 
@@ -296,6 +312,22 @@ systemctl restart origin-master.service
 ```
 
 You should now be able to deploy. [More info here](https://github.com/dwmkerr/docs/blob/master/openshift.md#failed-to-pull-image-unsupported-schema-version-2).
+
+**OpenShift Setup Issues**
+
+```
+TASK [openshift_manage_node : Wait for Node Registration] **********************
+FAILED - RETRYING: Wait for Node Registration (50 retries left).
+
+fatal: [node2.openshift.local -> master.openshift.local]: FAILED! => {"attempts": 50, "changed": false, "failed": true, "results": {"cmd": "/bin/oc get node node2.openshift.local -o json -n default", "results": [{}], "returncode": 0, "stderr": "Error from server (NotFound): nodes \"node2.openshift.local\" not found\n", "stdout": ""}, "state": "list"}
+        to retry, use: --limit @/home/ec2-user/openshift-ansible/playbooks/byo/config.retry
+```
+
+This issue appears to be due to a bug in the kubernetes / aws cloud provider configuration, which is documented here:
+
+https://github.com/dwmkerr/terraform-aws-openshift/issues/40
+
+At this stage if the AWS generated hostnames for OpenShift nodes are specified in the inventory, then this problem should disappear. If internal DNS names are used (e.g. node1.openshift.internal) then this issue will occur.
 
 ## Developer Guide
 
