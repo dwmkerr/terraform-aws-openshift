@@ -26,3 +26,11 @@ variable "key_name" {
 variable "public_key_path" {
   description = "The local public key path, e.g. ~/.ssh/id_rsa.pub"
 }
+
+variable "cluster_name" {
+  description = "Name of the cluster, e.g: 'openshift-cluster'. Useful when running multiple clusters in the same AWS account."
+}
+
+variable "cluster_id" {
+  description = "ID of the cluster, e.g: 'openshift-cluster-us-east-1'. Useful when running multiple clusters in the same AWS account."
+}

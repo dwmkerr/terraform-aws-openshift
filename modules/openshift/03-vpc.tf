@@ -3,20 +3,26 @@ resource "aws_vpc" "openshift" {
   cidr_block           = "${var.vpc_cidr}"
   enable_dns_hostnames = true
 
-  tags {
-    Name    = "OpenShift VPC"
-    Project = "openshift"
-  }
+  //  Use our common tags and add a specific name.
+  tags = "${merge(
+    local.common_tags,
+    map(
+      "Name", "OpenShift VPC"
+    )
+  )}"
 }
 
 //  Create an Internet Gateway for the VPC.
 resource "aws_internet_gateway" "openshift" {
   vpc_id = "${aws_vpc.openshift.id}"
 
-  tags {
-    Name    = "OpenShift IGW"
-    Project = "openshift"
-  }
+  //  Use our common tags and add a specific name.
+  tags = "${merge(
+    local.common_tags,
+    map(
+      "Name", "OpenShift IGW"
+    )
+  )}"
 }
 
 //  Create a public subnet.
@@ -27,10 +33,13 @@ resource "aws_subnet" "public-subnet" {
   map_public_ip_on_launch = true
   depends_on              = ["aws_internet_gateway.openshift"]
 
-  tags {
-    Name    = "OpenShift Public Subnet"
-    Project = "openshift"
-  }
+  //  Use our common tags and add a specific name.
+  tags = "${merge(
+    local.common_tags,
+    map(
+      "Name", "OpenShift Public Subnet"
+    )
+  )}"
 }
 
 //  Create a route table allowing all addresses access to the IGW.
@@ -42,10 +51,13 @@ resource "aws_route_table" "public" {
     gateway_id = "${aws_internet_gateway.openshift.id}"
   }
 
-  tags {
-    Name    = "OpenShift Public Route Table"
-    Project = "openshift"
-  }
+  //  Use our common tags and add a specific name.
+  tags = "${merge(
+    local.common_tags,
+    map(
+      "Name", "OpenShift Public Route Table"
+    )
+  )}"
 }
 
 //  Now associate the route table with the public subnet - giving

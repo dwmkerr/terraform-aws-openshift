@@ -219,6 +219,8 @@ When you run `make openshift`, all that happens is the `inventory.template.cfg` 
 
 ## Choosing the OpenShift Version
 
+Currently, OpenShift 3.7 is installed.
+
 To change the version, just update the version identifier in this line of the [`./install-from-bastion.sh`](./install-from-bastion.sh) script:
 
 ```bash
@@ -226,6 +228,13 @@ git clone -b release-3.6 https://github.com/openshift/openshift-ansible
 ```
 
 Available versions are listed [here](https://github.com/openshift/openshift-ansible#getting-the-correct-version).
+
+
+| Version | Status |
+|---------|--------|
+| 3.5     | Tested successfully. |
+| 3.6     | Tested successfully. |
+| 3.7     | Work in progress. |
 
 OpenShift 3.5 is fully tested, and has a slightly different setup. You can build 3.5 by checking out the [`release/openshift-3.5`](https://github.com/dwmkerr/terraform-aws-openshift/tree/release/openshift-3.5) branch.
 
@@ -328,6 +337,18 @@ This issue appears to be due to a bug in the kubernetes / aws cloud provider con
 https://github.com/dwmkerr/terraform-aws-openshift/issues/40
 
 At this stage if the AWS generated hostnames for OpenShift nodes are specified in the inventory, then this problem should disappear. If internal DNS names are used (e.g. node1.openshift.internal) then this issue will occur.
+
+**Unable to restart service origin-master-api**
+
+```
+Failure summary:
+
+
+  1. Hosts:    ip-10-0-1-129.ec2.internal
+     Play:     Configure masters
+     Task:     restart master api
+     Message:  Unable to restart service origin-master-api: Job for origin-master-api.service failed because the control process exited with error code. See "systemctl status origin-master-api.service" and "journalctl -xe" for details.
+```
 
 ## Developer Guide
 

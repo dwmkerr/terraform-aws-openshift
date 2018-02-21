@@ -19,10 +19,13 @@ resource "aws_security_group" "openshift-vpc" {
     self      = true
   }
 
-  tags {
-    Name    = "OpenShift Internal VPC"
-    Project = "openshift"
-  }
+  //  Use our common tags and add a specific name.
+  tags = "${merge(
+    local.common_tags,
+    map(
+      "Name", "OpenShift Internal VPC"
+    )
+  )}"
 }
 
 //  This security group allows public ingress to the instances for HTTP, HTTPS
@@ -64,10 +67,13 @@ resource "aws_security_group" "openshift-public-ingress" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
-    Name    = "OpenShift Public Access"
-    Project = "openshift"
-  }
+  //  Use our common tags and add a specific name.
+  tags = "${merge(
+    local.common_tags,
+    map(
+      "Name", "OpenShift Public Ingress"
+    )
+  )}"
 }
 
 //  This security group allows public egress from the instances for HTTP and
@@ -93,10 +99,13 @@ resource "aws_security_group" "openshift-public-egress" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
-    Name    = "OpenShift Public Access"
-    Project = "openshift"
-  }
+  //  Use our common tags and add a specific name.
+  tags = "${merge(
+    local.common_tags,
+    map(
+      "Name", "OpenShift Public Egress"
+    )
+  )}"
 }
 
 //  Security group which allows SSH access to a host. Used for the bastion.
@@ -113,8 +122,11 @@ resource "aws_security_group" "openshift-ssh" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
-    Name    = "OpenShift SSH Access"
-    Project = "openshift"
-  }
+  //  Use our common tags and add a specific name.
+  tags = "${merge(
+    local.common_tags,
+    map(
+      "Name", "OpenShift SSH Access"
+    )
+  )}"
 }

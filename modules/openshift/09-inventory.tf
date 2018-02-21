@@ -10,6 +10,7 @@ data "template_file" "inventory" {
     master_hostname = "${aws_instance.master.private_dns}"
     node1_hostname = "${aws_instance.node1.private_dns}"
     node2_hostname = "${aws_instance.node1.private_dns}"
+    cluster_id = "${var.cluster_id}"
   }
 }
 
