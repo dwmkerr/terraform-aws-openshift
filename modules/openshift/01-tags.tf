@@ -24,4 +24,3 @@ locals {
     "kubernetes.io/cluster/${var.cluster_name}", "${var.cluster_id}"
   )}"
 }
-
