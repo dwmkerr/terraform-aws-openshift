@@ -13,7 +13,7 @@
 //    - OpenShift: Cluster Labelling Requirements: https://docs.openshift.org/latest/install_config/configuring_aws.html#aws-cluster-labeling
 
 //  Define our common tags.
-//   - Project: Purely for my own organision, delete or change as you like!
+//   - Project: Purely for my own organisation, delete or change as you like!
 //   - KubernetesCluster: Set to <cluster_id>, required for OpenShift < 3.7
 //   - kubernetes.io/cluster/<name>: Set to <cluster_id>, required for OpenShift >= 3.7
 //  The syntax below is ugly, but needed as we are using dynamic key names.
