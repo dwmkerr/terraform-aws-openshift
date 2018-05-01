@@ -42,14 +42,14 @@ resource "aws_instance" "master" {
   }
 
   key_name = "${aws_key_pair.keypair.key_name}"
-
-  tags {
-    Name    = "OpenShift Master"
-    Project = "openshift"
-    // this tag is required for dynamic EBS PVCs
-    // see https://github.com/kubernetes/kubernetes/issues/39178
-    KubernetesCluster = "openshift-${var.region}"
-  }
+  
+  //  Use our common tags and add a specific name.
+  tags = "${merge(
+    local.common_tags,
+    map(
+      "Name", "OpenShift Master"
+    )
+  )}"
 }
 
 //  Create the node userdata script.
@@ -91,11 +91,13 @@ resource "aws_instance" "node1" {
 
   key_name = "${aws_key_pair.keypair.key_name}"
 
-  tags {
-    Name    = "OpenShift Node 1"
-    Project = "openshift"
-    KubernetesCluster = "openshift-${var.region}"
-  }
+  //  Use our common tags and add a specific name.
+  tags = "${merge(
+    local.common_tags,
+    map(
+      "Name", "OpenShift Node 1"
+    )
+  )}"
 }
 resource "aws_instance" "node2" {
   ami                  = "${data.aws_ami.rhel7_2.id}"
@@ -126,9 +128,11 @@ resource "aws_instance" "node2" {
 
   key_name = "${aws_key_pair.keypair.key_name}"
 
-  tags {
-    Name    = "OpenShift Node 2"
-    Project = "openshift"
-    KubernetesCluster = "openshift-${var.region}"
-  }
+  //  Use our common tags and add a specific name.
+  tags = "${merge(
+    local.common_tags,
+    map(
+      "Name", "OpenShift Node 2"
+    )
+  )}"
 }

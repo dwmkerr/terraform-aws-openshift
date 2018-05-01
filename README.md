@@ -4,7 +4,7 @@
 
 This project shows you how to set up OpenShift Origin on AWS using Terraform. This the companion project to my article [Get up and running with OpenShift on AWS](http://www.dwmkerr.com/get-up-and-running-with-openshift-on-aws/).
 
-![OpenShift Sample Project](./docs/openshift-sample.png)
+![OpenShift Sample Project](./docs/origin_3.9_screenshot.png)
 
 I am also adding some 'recipes' which you can use to mix in more advanced features:
 
@@ -219,13 +219,23 @@ When you run `make openshift`, all that happens is the `inventory.template.cfg` 
 
 ## Choosing the OpenShift Version
 
+Currently, OpenShift 3.9 is installed.
+
 To change the version, just update the version identifier in this line of the [`./install-from-bastion.sh`](./install-from-bastion.sh) script:
 
 ```bash
-git clone -b release-3.6 https://github.com/openshift/openshift-ansible
+git clone -b release-3.9 https://github.com/openshift/openshift-ansible
 ```
 
 Available versions are listed [here](https://github.com/openshift/openshift-ansible#getting-the-correct-version).
+
+
+| Version | Status |
+|---------|--------|
+| 3.9     | Tested successfully |
+| 3.7     | [Work in progress](https://github.com/dwmkerr/terraform-aws-openshift/pull/43) |
+| 3.6     | Tested successfully |
+| 3.5     | Tested successfully |
 
 OpenShift 3.5 is fully tested, and has a slightly different setup. You can build 3.5 by checking out the [`release/openshift-3.5`](https://github.com/dwmkerr/terraform-aws-openshift/tree/release/openshift-3.5) branch.
 
@@ -328,6 +338,18 @@ This issue appears to be due to a bug in the kubernetes / aws cloud provider con
 https://github.com/dwmkerr/terraform-aws-openshift/issues/40
 
 At this stage if the AWS generated hostnames for OpenShift nodes are specified in the inventory, then this problem should disappear. If internal DNS names are used (e.g. node1.openshift.internal) then this issue will occur.
+
+**Unable to restart service origin-master-api**
+
+```
+Failure summary:
+
+
+  1. Hosts:    ip-10-0-1-129.ec2.internal
+     Play:     Configure masters
+     Task:     restart master api
+     Message:  Unable to restart service origin-master-api: Job for origin-master-api.service failed because the control process exited with error code. See "systemctl status origin-master-api.service" and "journalctl -xe" for details.
+```
 
 ## Developer Guide
 
