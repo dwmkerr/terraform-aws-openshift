@@ -21,7 +21,7 @@ resource "aws_instance" "master" {
   iam_instance_profile = "${aws_iam_instance_profile.openshift-instance-profile.id}"
   user_data            = "${data.template_file.setup-master.rendered}"
 
-  security_groups = [
+  vpc_security_group_ids = [
     "${aws_security_group.openshift-vpc.id}",
     "${aws_security_group.openshift-public-ingress.id}",
     "${aws_security_group.openshift-public-egress.id}",
@@ -69,7 +69,7 @@ resource "aws_instance" "node1" {
   iam_instance_profile = "${aws_iam_instance_profile.openshift-instance-profile.id}"
   user_data            = "${data.template_file.setup-node.rendered}"
 
-  security_groups = [
+  vpc_security_group_ids = [
     "${aws_security_group.openshift-vpc.id}",
     "${aws_security_group.openshift-public-ingress.id}",
     "${aws_security_group.openshift-public-egress.id}",
@@ -106,7 +106,7 @@ resource "aws_instance" "node2" {
   iam_instance_profile = "${aws_iam_instance_profile.openshift-instance-profile.id}"
   user_data            = "${data.template_file.setup-node.rendered}"
 
-  security_groups = [
+  vpc_security_group_ids = [
     "${aws_security_group.openshift-vpc.id}",
     "${aws_security_group.openshift-public-ingress.id}",
     "${aws_security_group.openshift-public-egress.id}",
