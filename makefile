@@ -21,6 +21,10 @@ openshift:
 	cat ./scripts/postinstall-node.sh | ssh -A ec2-user@$$(terraform output bastion-public_dns) ssh node1.openshift.local
 	cat ./scripts/postinstall-node.sh | ssh -A ec2-user@$$(terraform output bastion-public_dns) ssh node2.openshift.local
 
+# Destroy the infrastructure.
+destroy:
+	terraform init && terraform destroy -auto-approve
+
 # Open the console.
 browse-openshift:
 	open $$(terraform output master-url)
