@@ -21,14 +21,8 @@ module "openshift" {
 output "master-url" {
   value = "https://${module.openshift.master-public_ip}.xip.io:8443"
 }
-output "master-public_dns" {
-  value = "${module.openshift.master-public_dns}"
-}
 output "master-public_ip" {
   value = "${module.openshift.master-public_ip}"
-}
-output "bastion-public_dns" {
-  value = "${module.openshift.bastion-public_dns}"
 }
 output "bastion-public_ip" {
   value = "${module.openshift.bastion-public_ip}"
