@@ -234,7 +234,8 @@ However, this may not work if the version you change to requires a different set
 |---------|---------------------|------------------------------------------------------------------------------------------------|
 | 3.10    | Tested successfully | [`release/okd-3.10`](https://github.com/dwmkerr/terraform-aws-openshift/tree/release/okd-3.10) |
 | 3.9     | Tested successfully | [`release/ocp-3.9`](https://github.com/dwmkerr/terraform-aws-openshift/tree/release/ocp-3.9)   |
-| 3.7     | Tested successfully |                                                                                                |
+| 3.8     | Untested |                                                                                                |
+| 3.7     | Untested |                                                                                                |
 | 3.6     | Tested successfully | [`release/openshift-3.6`](tree/release/openshift-3.6) |
 | 3.5     | Tested successfully | [`release/openshift-3.5`](tree/release/openshift-3.5) |
 
