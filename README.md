@@ -2,9 +2,9 @@
 
 [![CircleCI](https://circleci.com/gh/dwmkerr/terraform-aws-openshift.svg?style=shield)](https://circleci.com/gh/dwmkerr/terraform-aws-openshift)
 
-This project shows you how to set up OpenShift Origin on AWS using Terraform. This the companion project to my article [Get up and running with OpenShift on AWS](http://www.dwmkerr.com/get-up-and-running-with-openshift-on-aws/).
+This project shows you how to set up OpenShift on AWS using Terraform. This the companion project to my article [Get up and running with OpenShift on AWS](http://www.dwmkerr.com/get-up-and-running-with-openshift-on-aws/).
 
-![OpenShift Sample Project](./docs/origin_3.9_screenshot.png)
+![OpenShift Sample Project](./docs/okd_3.10_screenshot.png)
 
 I am also adding some 'recipes' which you can use to mix in more advanced features:
 
@@ -133,7 +133,7 @@ The url will be something like `https://a.b.c.d.xip.io:8443`.
 
 ### The Master Node
 
-The master node has the OpenShift client installed and is authenticated as a cluter administrator. If you SSH onto the master node via the bastion, then you can use the OpenShift client and have full access to all projects:
+The master node has the OpenShift client installed and is authenticated as a cluster administrator. If you SSH onto the master node via the bastion, then you can use the OpenShift client and have full access to all projects:
 
 ```
 $ make ssh-master # or if you prefer: ssh -t -A ec2-user@$(terraform output bastion-public_ip) ssh master.openshift.local
@@ -219,7 +219,7 @@ When you run `make openshift`, all that happens is the `inventory.template.cfg` 
 
 ## Choosing the OpenShift Version
 
-Currently, OpenShift 3.9 is installed.
+Currently, OKD 3.10 is installed.
 
 To change the version, just update the version identifier in this line of the [`./install-from-bastion.sh`](./install-from-bastion.sh) script:
 
@@ -230,12 +230,13 @@ git clone -b release-3.9 https://github.com/openshift/openshift-ansible
 Available versions are listed [here](https://github.com/openshift/openshift-ansible#getting-the-correct-version).
 
 
-| Version | Status              | Branch                                                                                       |
-|---------|---------------------|----------------------------------------------------------------------------------------------|
-| 3.9     | Tested successfully | [`release/ocp-3.9`](https://github.com/dwmkerr/terraform-aws-openshift/tree/release/ocp-3.9) |
-| 3.7     | Tested successfully |                                                                                              |
-| 3.6     | Tested successfully |                                                                                              |
-| 3.5     | Tested successfully |                                                                                              |
+| Version | Status              | Branch                                                                                         |
+|---------|---------------------|------------------------------------------------------------------------------------------------|
+| 3.10    | Tested successfully | [`release/okd-3.10`](https://github.com/dwmkerr/terraform-aws-openshift/tree/release/okd-3.10) |
+| 3.9     | Tested successfully | [`release/ocp-3.9`](https://github.com/dwmkerr/terraform-aws-openshift/tree/release/ocp-3.9)   |
+| 3.7     | Tested successfully |                                                                                                |
+| 3.6     | Tested successfully |                                                                                                |
+| 3.5     | Tested successfully |                                                                                                |
 
 OpenShift 3.5 is fully tested, and has a slightly different setup. You can build 3.5 by checking out the [`release/openshift-3.5`](https://github.com/dwmkerr/terraform-aws-openshift/tree/release/openshift-3.5) branch.
 
