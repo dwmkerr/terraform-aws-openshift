@@ -221,13 +221,13 @@ When you run `make openshift`, all that happens is the `inventory.template.cfg` 
 
 Currently, OKD 3.10 is installed.
 
-To change the version, just update the version identifier in this line of the [`./install-from-bastion.sh`](./install-from-bastion.sh) script:
+To change the version, you can attempt to update the version identifier in this line of the [`./install-from-bastion.sh`](./install-from-bastion.sh) script:
 
 ```bash
-git clone -b release-3.9 https://github.com/openshift/openshift-ansible
+git clone -b release-3.10 https://github.com/openshift/openshift-ansible
 ```
 
-Available versions are listed [here](https://github.com/openshift/openshift-ansible#getting-the-correct-version).
+However, this may not work if the version you change to requires a different setup. To allow people to install earlier versions, stable branches are available. Available versions are listed [here](https://github.com/openshift/openshift-ansible#getting-the-correct-version).
 
 
 | Version | Status              | Branch                                                                                         |
@@ -235,10 +235,9 @@ Available versions are listed [here](https://github.com/openshift/openshift-ansi
 | 3.10    | Tested successfully | [`release/okd-3.10`](https://github.com/dwmkerr/terraform-aws-openshift/tree/release/okd-3.10) |
 | 3.9     | Tested successfully | [`release/ocp-3.9`](https://github.com/dwmkerr/terraform-aws-openshift/tree/release/ocp-3.9)   |
 | 3.7     | Tested successfully |                                                                                                |
-| 3.6     | Tested successfully |                                                                                                |
-| 3.5     | Tested successfully |                                                                                                |
+| 3.6     | Tested successfully | [`release/openshift-3.6`](tree/release/openshift-3.6) |
+| 3.5     | Tested successfully | [`release/openshift-3.5`](tree/release/openshift-3.5) |
 
-OpenShift 3.5 is fully tested, and has a slightly different setup. You can build 3.5 by checking out the [`release/openshift-3.5`](https://github.com/dwmkerr/terraform-aws-openshift/tree/release/openshift-3.5) branch.
 
 ## Destroying the Cluster
 
