@@ -136,7 +136,7 @@ The url will be something like `https://a.b.c.d.xip.io:8443`.
 The master node has the OpenShift client installed and is authenticated as a cluter administrator. If you SSH onto the master node via the bastion, then you can use the OpenShift client and have full access to all projects:
 
 ```
-$ make ssh-master # or if you prefer: ssh -t -A ec2-user@$(terraform output bastion-public_dns) ssh master.openshift.local
+$ make ssh-master # or if you prefer: ssh -t -A ec2-user@$(terraform output bastion-public_ip) ssh master.openshift.local
 $ oc get pods
 NAME                       READY     STATUS    RESTARTS   AGE
 docker-registry-1-d9734    1/1       Running   0          2h
@@ -180,7 +180,7 @@ Now check the address of the Docker Registry. Your Docker Registry url is just y
 https://54.85.76.73.xip.io:8443
 ```
 
-In the example above, my registry url is `https://docker-registry-default.54.85.76.73.xip.io:8443`. You can also get this url by running `oc get routes -n default` on the master node.
+In the example above, my registry url is `https://docker-registry-default.54.85.76.73.xip.io`. You can also get this url by running `oc get routes -n default` on the master node.
 
 You will need to add this registry to the list of untrusted registries. The documentation for how to do this here https://docs.docker.com/registry/insecure/. On a Mac, the easiest way to do this is open the Docker Preferences, go to 'Daemon' and add the address to the list of insecure regsitries:
 
@@ -308,7 +308,7 @@ source="/var/log/containers/counter-1-*"  | rex field=source "\/var\/log\/contai
 Ugh, stupid OpenShift docker version vs registry version issue. There's a workaround. First, ssh onto the master:
 
 ```
-$ ssh -A ec2-user@$(terraform output bastion-public_dns)
+$ ssh -A ec2-user@$(terraform output bastion-public_ip)
 
 $ ssh master.openshift.local
 ```

@@ -1,4 +1,9 @@
 //  Launch configuration for the consul cluster auto-scaling group.
+resource "aws_eip" "bastion_eip" {
+  instance = "${aws_instance.bastion.id}"
+  vpc      = true
+}
+
 resource "aws_instance" "bastion" {
   ami                  = "${data.aws_ami.amazonlinux.id}"
   instance_type        = "t2.small"

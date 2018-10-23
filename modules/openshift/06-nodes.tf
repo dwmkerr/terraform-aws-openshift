@@ -12,6 +12,12 @@ data "template_file" "setup-master" {
   }
 }
 
+// Create Elastic IP for master
+resource "aws_eip" "master_eip" {
+  instance = "${aws_instance.master.id}"
+  vpc      = true
+}
+
 //  Launch configuration for the consul cluster auto-scaling group.
 resource "aws_instance" "master" {
   ami                  = "${data.aws_ami.rhel7_2.id}"
@@ -42,7 +48,7 @@ resource "aws_instance" "master" {
   }
 
   key_name = "${aws_key_pair.keypair.key_name}"
-  
+
   //  Use our common tags and add a specific name.
   tags = "${merge(
     local.common_tags,
@@ -58,6 +64,17 @@ data "template_file" "setup-node" {
   vars {
     availability_zone = "${lookup(var.subnetaz, var.region)}"
   }
+}
+
+// Create Elastic IP for the nodes
+resource "aws_eip" "node1_eip" {
+  instance = "${aws_instance.node1.id}"
+  vpc      = true
+}
+
+resource "aws_eip" "node2_eip" {
+  instance = "${aws_instance.node2.id}"
+  vpc      = true
 }
 
 //  Create the two nodes. This would be better as a Launch Configuration and
@@ -99,6 +116,7 @@ resource "aws_instance" "node1" {
     )
   )}"
 }
+
 resource "aws_instance" "node2" {
   ami                  = "${data.aws_ami.rhel7_2.id}"
   instance_type        = "${var.amisize}"
