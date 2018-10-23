@@ -230,12 +230,12 @@ git clone -b release-3.9 https://github.com/openshift/openshift-ansible
 Available versions are listed [here](https://github.com/openshift/openshift-ansible#getting-the-correct-version).
 
 
-| Version | Status |
-|---------|--------|
-| 3.9     | Tested successfully |
-| 3.7     | [Work in progress](https://github.com/dwmkerr/terraform-aws-openshift/pull/43) |
-| 3.6     | Tested successfully |
-| 3.5     | Tested successfully |
+| Version | Status              | Branch                                                                                       |
+|---------|---------------------|----------------------------------------------------------------------------------------------|
+| 3.9     | Tested successfully | [`release/ocp-3.9`](https://github.com/dwmkerr/terraform-aws-openshift/tree/release/ocp-3.9) |
+| 3.7     | Tested successfully |                                                                                              |
+| 3.6     | Tested successfully |                                                                                              |
+| 3.5     | Tested successfully |                                                                                              |
 
 OpenShift 3.5 is fully tested, and has a slightly different setup. You can build 3.5 by checking out the [`release/openshift-3.5`](https://github.com/dwmkerr/terraform-aws-openshift/tree/release/openshift-3.5) branch.
 
