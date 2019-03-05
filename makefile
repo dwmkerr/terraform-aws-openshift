@@ -1,6 +1,6 @@
 infrastructure:
 	# Get the modules, create the infrastructure.
-	terraform init && terraform get && terraform apply
+	terraform init && terraform get && terraform apply -auto-approve
 
 # Installs OpenShift on the cluster.
 openshift:
@@ -17,9 +17,12 @@ openshift:
 	cat install-from-bastion.sh | ssh -o StrictHostKeyChecking=no -A ec2-user@$$(terraform output bastion-public_ip)
 
 	# Now the installer is done, run the postinstall steps on each host.
-	cat ./scripts/postinstall-master.sh | ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh master.openshift.local
-	cat ./scripts/postinstall-node.sh | ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node1.openshift.local
-	cat ./scripts/postinstall-node.sh | ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node2.openshift.local
+	# Note: these scripts cause a restart, so we use a hyphen to ignore the ssh
+	# connection termination.
+	- cat ./scripts/postinstall-master.sh | ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh master.openshift.local
+	- cat ./scripts/postinstall-node.sh | ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node1.openshift.local
+	- cat ./scripts/postinstall-node.sh | ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node2.openshift.local
+	echo "Complete! Wait a minute for hosts to restart, then run 'make browse-openshift' to login."
 
 # Destroy the infrastructure.
 destroy:
