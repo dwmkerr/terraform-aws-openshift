@@ -6,9 +6,13 @@ sudo -E su
 # Install dev tools.
 yum install -y "@Development Tools" python2-pip openssl-devel python-devel gcc libffi-devel
 
-# Get the OpenShift 3.10 installer.
+# Get the OKD 3.11 installer.
 pip install -I ansible==2.6.5
-git clone -b release-3.10 https://github.com/openshift/openshift-ansible
+git clone -b release-3.11 https://github.com/openshift/openshift-ansible
+
+# # Get the OpenShift 3.10 installer.
+# pip install -I ansible==2.6.5
+# git clone -b release-3.10 https://github.com/openshift/openshift-ansible
 
 # Get the OpenShift 3.9 installer.
 # pip install -I ansible==2.4.3.0

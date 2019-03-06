@@ -4,7 +4,7 @@
 
 This project shows you how to set up OpenShift on AWS using Terraform. This the companion project to my article [Get up and running with OpenShift on AWS](http://www.dwmkerr.com/get-up-and-running-with-openshift-on-aws/).
 
-![OpenShift Sample Project](./docs/okd_3.10_screenshot.png)
+![OpenShift Sample Project](./docs/okd_3.11_screenshot.png)
 
 I am also adding some 'recipes' which you can use to mix in more advanced features:
 
@@ -219,12 +219,12 @@ When you run `make openshift`, all that happens is the `inventory.template.cfg` 
 
 ## Choosing the OpenShift Version
 
-Currently, OKD 3.10 is installed.
+Currently, OKD 3.11 is installed.
 
 To change the version, you can attempt to update the version identifier in this line of the [`./install-from-bastion.sh`](./install-from-bastion.sh) script:
 
 ```bash
-git clone -b release-3.10 https://github.com/openshift/openshift-ansible
+git clone -b release-3.11 https://github.com/openshift/openshift-ansible
 ```
 
 However, this may not work if the version you change to requires a different setup. To allow people to install earlier versions, stable branches are available. Available versions are listed [here](https://github.com/openshift/openshift-ansible#getting-the-correct-version).
@@ -232,6 +232,7 @@ However, this may not work if the version you change to requires a different set
 
 | Version | Status              | Branch                                                                                         |
 |---------|---------------------|------------------------------------------------------------------------------------------------|
+| 3.11    | Work in Progress | [`release/okd-3.11`](https://github.com/dwmkerr/terraform-aws-openshift/tree/release/okd-3.11) |
 | 3.10    | Tested successfully | [`release/okd-3.10`](https://github.com/dwmkerr/terraform-aws-openshift/tree/release/okd-3.10) |
 | 3.9     | Tested successfully | [`release/ocp-3.9`](https://github.com/dwmkerr/terraform-aws-openshift/tree/release/ocp-3.9)   |
 | 3.8     | Untested |                                                                                                |
