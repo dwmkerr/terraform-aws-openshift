@@ -98,7 +98,15 @@ resource "aws_security_group" "openshift-public-egress" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
+  
+  //  CUSTOM - To allow for cluster-console login
+  egress {
+    from_port   = 8443
+    to_port     = 8443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
   //  Use our common tags and add a specific name.
   tags = "${merge(
     local.common_tags,
