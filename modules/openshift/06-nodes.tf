@@ -7,7 +7,7 @@ resource "aws_key_pair" "keypair" {
 //  Create the master userdata script.
 data "template_file" "setup-master" {
   template = "${file("${path.module}/files/setup-master.sh")}"
-  vars {
+  vars = {
     availability_zone = "${data.aws_availability_zones.azs.names[0]}"
   }
 }
@@ -61,7 +61,7 @@ resource "aws_instance" "master" {
 //  Create the node userdata script.
 data "template_file" "setup-node" {
   template = "${file("${path.module}/files/setup-node.sh")}"
-  vars {
+  vars = {
     availability_zone = "${data.aws_availability_zones.azs.names[0]}"
   }
 }
