@@ -51,7 +51,7 @@ created, which is used to install the OpenShift Origin platform on the hosts.
 
 You need:
 
-1. [Terraform](https://www.terraform.io/intro/getting-started/install.html) - `brew update && brew install terraform`
+1. [Terraform (0.12 or greater)](https://www.terraform.io/intro/getting-started/install.html) - `brew update && brew install terraform`
 2. An AWS account, configured with the cli locally -
 ```
 if [[ "$unamestr" == 'Linux' ]]; then

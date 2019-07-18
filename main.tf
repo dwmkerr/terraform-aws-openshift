@@ -1,6 +1,15 @@
-//  Setup the core provider information.
+# Setup our providers so that we have deterministic dependecy resolution. 
 provider "aws" {
   region  = "${var.region}"
+  version = "~> 2.19"
+}
+
+provider "local" {
+  version = "~> 1.3"
+}
+
+provider "template" {
+  version = "~> 2.1"
 }
 
 //  Create the OpenShift cluster using our module.
